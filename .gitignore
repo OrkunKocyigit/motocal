@@ -78,3 +78,7 @@ typings/
 
 Jetbrains directories
 .idea/
+
+# SonarQube
+.scannerwork
+tests
