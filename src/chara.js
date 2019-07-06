@@ -4,6 +4,7 @@ var {Label, Checkbox, FormControl, InputGroup, FormGroup, Button, ButtonGroup, P
 var CreateClass = require('create-react-class');
 var {RegisteredChara} = require('./template.js');
 var GlobalConst = require('./global_const.js');
+const Typeahead = require('./typeahead').Typeahead;
 var {CriticalBuffList} = require('./components.js');
 
 // inject GlobalConst...
@@ -455,8 +456,8 @@ var Chara = CreateClass({
         this.setState({openEXLBlist: !(this.state.openEXLBlist)})
     },
     render: function () {
-        var locale = this.props.locale;
-
+        let locale = this.props.locale;
+        let showInvul = this.state.openBufflist ? "" : "hidden";
         return (
             <div className="chara-content">
                 <table className="table table-sm table-bordered table-responsive">
@@ -538,8 +539,15 @@ var Chara = CreateClass({
 
                     <tr>
                         <th className="bg-primary">{intl.translate("プラスボーナス", locale)}</th>
-                        <td><FormControl componentClass="select" value={this.state.plusBonus}
-                                         onChange={this.handleSelectEvent.bind(this, "plusBonus")}>{selector.charaPlusNumList}</FormControl></td>
+                        <td>
+                            <Typeahead value={this.state.plusBonus}
+                                       options={selector.charaPlusNumList}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       inputProps={{type: "text"}}
+                                       stat="plusBonus">
+                            </Typeahead>
+                        </td>
                     </tr>
 
                     <tr>
@@ -596,99 +604,183 @@ var Chara = CreateClass({
                             onClick={this.switchBufflist}>{intl.translate("個別バフ", locale)}</Button></th>
                         <td></td>
                     </tr>
-                    {this.state.openBufflist ?
-                        [
-                            <tr key="normalBuff">
-                                <th className="bg-primary">{intl.translate("通常バフ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.normalBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "normalBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="elementBuff">
-                                <th className="bg-primary">{intl.translate("属性バフ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.elementBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "elementBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="otherBuff">
-                                <th className="bg-primary">{intl.translate("その他バフ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.otherBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "otherBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="otherBuff2">
-                                <th className="bg-primary">{intl.translate("その他バフ2", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.otherBuff2}
-                                                 onChange={this.handleSelectEvent.bind(this, "otherBuff2")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="criticalBuff">
-                                <th className="bg-primary">{intl.translate("クリティカルバフ", locale)}</th>
-                                <td>
-                                    <CriticalBuffList locale={locale}
-                                        onBlur={this.handleOnBlur.bind(this, null)}
-                                        onCountChange={(count) => this.setState({criticalBuffCount: count})}
-                                        label="criticalBuff"
-                                        criticalArray={this.state.criticalBuff}
-                                        initialCount={this.state.criticalBuffCount} />
-                                </td>
-                            </tr>,
-                            <tr key="daBuff">
-                                <th className="bg-primary">{intl.translate("DAバフ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.daBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "daBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="taBuff">
-                                <th className="bg-primary">{intl.translate("TAバフ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.taBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "taBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="additionalDamageBuff">
-                                <th className="bg-primary">{intl.translate("追加ダメージバフ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.additionalDamageBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "additionalDamageBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="supplementalDamageBuff">
-                                <th className="bg-primary">{intl.translate("supplementalDamageBuff", locale)}</th>
-                                <td><FormControl type="number" value={this.state.supplementalDamageBuff}
-                                                 onBlur={this.handleOnBlur} onChange={this.handleSelectEvent.bind(this, "supplementalDamageBuff")}></FormControl>
-                                </td>
-                            </tr>,
-                            <tr key="ougiGageBuff">
-                                <th className="bg-primary">{intl.translate("奥義ゲージ上昇率アップ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.ougiGageBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "ougiGageBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="uplift">
-                                <th className="bg-primary">{intl.translate("高揚", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.uplift}
-                                                 onChange={this.handleSelectEvent.bind(this, "uplift")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="ougiDamageBuff">
-                                <th className="bg-primary">{intl.translate("奥義ダメージUP", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.ougiDamageBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "ougiDamageBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="damageLimit">
-                                <th className="bg-primary">{intl.translate("ダメージ上限アップ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.damageLimitBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "damageLimitBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>,
-                            <tr key="ougiDamageLimit">
-                                <th className="bg-primary">{intl.translate("奥義ダメージ上限アップ", locale)}</th>
-                                <td><InputGroup><FormControl componentClass="select" value={this.state.ougiDamageLimitBuff}
-                                                 onChange={this.handleSelectEvent.bind(this, "ougiDamageLimitBuff")}>{selector.buffLevel}</FormControl><InputGroup.Addon>%</InputGroup.Addon>
-                                </InputGroup></td>
-                            </tr>
-                        ]
-                        : null}
+
+                    <tr className={showInvul} key="normalBuff">
+                        <th className="bg-primary">{intl.translate("通常バフ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.normalBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="normalBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="elementBuff">
+                        <th className="bg-primary">{intl.translate("属性バフ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.elementBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="elementBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="otherBuff">
+                        <th className="bg-primary">{intl.translate("その他バフ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.otherBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="otherBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="otherBuff2">
+                        <th className="bg-primary">{intl.translate("その他バフ2", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.otherBuff2}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="otherBuff2"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="criticalBuff">
+                        <th className="bg-primary">{intl.translate("クリティカルバフ", locale)}</th>
+                        <td>
+                            <CriticalBuffList locale={locale}
+                                              onBlur={this.handleOnBlur}
+                                              onCountChange={(count) => this.setState({criticalBuffCount: count})}
+                                              label="criticalBuff"
+                                              criticalArray={this.state.criticalBuff}
+                                              initialCount={this.state.criticalBuffCount}/>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="daBuff">
+                        <th className="bg-primary">{intl.translate("DAバフ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.daBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="daBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="taBuff">
+                        <th className="bg-primary">{intl.translate("TAバフ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.taBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="taBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="additionalDamageBuff">
+                        <th className="bg-primary">{intl.translate("追加ダメージバフ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.additionalDamageBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="additionalDamageBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="supplementalDamageBuff">
+                        <th className="bg-primary">{intl.translate("supplementalDamageBuff", locale)}</th>
+                        <td><FormControl type="number" value={this.state.supplementalDamageBuff}
+                                         onBlur={this.handleOnBlur}
+                                         onChange={this.handleSelectEvent.bind(this, "supplementalDamageBuff")}></FormControl>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="ougiGageBuff">
+                        <th className="bg-primary">{intl.translate("奥義ゲージ上昇率アップ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.ougiGageBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="ougiGageBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="uplift">
+                        <th className="bg-primary">{intl.translate("高揚", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.uplift}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="uplift"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="ougiDamageBuff">
+                        <th className="bg-primary">{intl.translate("奥義ダメージUP", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.ougiDamageBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="ougiDamageBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="damageLimitBuff">
+                        <th className="bg-primary">{intl.translate("ダメージ上限アップ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.damageLimitBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="damageLimitBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
+                    <tr className={showInvul} key="ougiDamageLimitBuff">
+                        <th className="bg-primary">{intl.translate("奥義ダメージ上限アップ", locale)}</th>
+                        <td>
+                            <Typeahead value={this.state.ougiDamageLimitBuff}
+                                       options={selector.buffLevel}
+                                       onBlur={this.handleOnBlur}
+                                       onChange={this.handleEvent}
+                                       stat="ougiDamageLimitBuff"
+                                       addon="%">
+                            </Typeahead>
+                        </td>
+                    </tr>
+
                     <tr>
                         <th className="bg-primary">
                             <Button onClick={this.switchLBlist}>{"LimitBonus"}</Button>

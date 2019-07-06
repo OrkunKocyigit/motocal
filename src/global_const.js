@@ -5,11 +5,18 @@ var PropTypes = require('prop-types');
 var CreateClass = require('create-react-class');
 
 module.exports.TextWithTooltip = CreateClass({
+    getInitialState: function() {
+        return {
+            placement : "top"
+        };
+    },
+    setPlacement: function(isTop) {
+        this.setState({placement: isTop ? "top" : "bottom"})
+    },
     render: function () {
-        var tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
-
+        let tooltip = <Tooltip id={this.props.id}>{this.props.tooltip}</Tooltip>;
         return (
-            <OverlayTrigger overlay={tooltip} placement="top" delayShow={300} delayHide={150}>
+            <OverlayTrigger overlay={tooltip} placement={this.state.placement} delayShow={300} delayHide={150}>
                 {this.props.children}
             </OverlayTrigger>
         );
@@ -2627,19 +2634,11 @@ module.exports.selector.zh.summonElements = Object.keys(summonElementTypes).map(
     return <option value={opt} key={opt}>{intl.translate(summonElementTypes[opt].name, "zh")}</option>;
 });
 
-module.exports.selector.summonAmounts = summonAmountList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
+module.exports.selector.summonAmounts = summonAmountList.map(String);
 
-module.exports.selector.zenithAttack = zenithAttackBonus.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.zenithHP = zenithHPBonus.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.zenithPartyHP = zenithPartyHPBonus.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
+module.exports.selector.zenithAttack = zenithAttackBonus.map(String);
+module.exports.selector.zenithHP = zenithHPBonus.map(String);
+module.exports.selector.zenithPartyHP = zenithPartyHPBonus.map(String);
 
 //module.exports.selector.zenithCriticalBonus = zenithCriticalBonus.map(function (opt) {
 //    return <option value={opt} key={opt}>{opt}</option>;
@@ -2652,36 +2651,18 @@ module.exports.selector.slv = skilllevels.map(function (opt) {
 module.exports.selector.consider = considerNum.map(function (opt) {
     return <option value={opt} key={opt}>{opt}</option>;
 });
-module.exports.selector.buffLevel = buffLevelList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.ougiGageUpOugiBuffLevel = ougiGageUpOugiBuffLevelList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.criticalRateLevel = criticalRateLevelList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.ougiRatio = ougiRatioList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
+module.exports.selector.buffLevel = buffLevelList.map(String);
+module.exports.selector.ougiGageUpOugiBuffLevel = ougiGageUpOugiBuffLevelList.map(String);
+module.exports.selector.criticalRateLevel = criticalRateLevelList.map(String);
+module.exports.selector.ougiRatio = ougiRatioList.map(String);
 module.exports.selector.hplist = HPList.map(function (opt) {
     return <option value={opt} key={opt}>{opt}</option>;
 });
-module.exports.selector.masteratk = masterATKList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.masterhp = masterHPList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.masterDA = masterDAList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.masterTA = masterTAList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
-module.exports.selector.masterDamageLimit = masterDamageLimitList.map(function (opt) {
-    return <option value={opt} key={opt}>{opt}</option>;
-});
+module.exports.selector.masteratk = masterATKList.reverse().map(String);
+module.exports.selector.masterhp = masterHPList.reverse().map(String);
+module.exports.selector.masterDA = masterDAList.reverse().map(String);
+module.exports.selector.masterTA = masterTAList.reverse().map(String);
+module.exports.selector.masterDamageLimit = masterDamageLimitList.reverse().map(String);
 module.exports.selector.chainNumber = chainNumberList.map(function (opt) {
     return <option value={opt} key={opt}>{opt}</option>;
 });
@@ -2700,7 +2681,7 @@ module.exports.selector.plusnum = Object.keys(plusNumList).map(function (opt) {
     return <option value={plusNumList[opt]} key={opt}>{opt}</option>
 });
 module.exports.selector.charaPlusNumList = Object.keys(charaPlusNumList).map(function (opt) {
-    return <option value={charaPlusNumList[opt]} key={opt}>{opt}</option>
+    return {id: charaPlusNumList[opt].toString(), label: opt.toString()};
 });
 
 module.exports.selector.level100Limit = Object.keys(levelList100Limit).map(function (opt) {
@@ -2818,13 +2799,13 @@ module.exports.supportedChartSortkeys = supportedChartSortkeys;
 module.exports.supportedSimulationChartSortkeys = supportedSimulationChartSortkeys;
 
 module.exports.selector.ja.enemydeftypes = Object.keys(enemyDefenseType).map(function (opt) {
-    return <option value={opt} key={opt}>{intl.translate(enemyDefenseType[opt].name, "ja")}</option>;
+    return {id: opt.toString(), label: intl.translate(enemyDefenseType[opt].name, "ja")};
 });
 module.exports.selector.en.enemydeftypes = Object.keys(enemyDefenseType).map(function (opt) {
-    return <option value={opt} key={opt}>{intl.translate(enemyDefenseType[opt].name, "en")}</option>;
+    return {id: opt.toString(), label: intl.translate(enemyDefenseType[opt].name, "en")};
 });
 module.exports.selector.zh.enemydeftypes = Object.keys(enemyDefenseType).map(function (opt) {
-    return <option value={opt} key={opt}>{intl.translate(enemyDefenseType[opt].name, "zh")}</option>;
+    return {id: opt.toString(), label: intl.translate(enemyDefenseType[opt].name, "zh")};
 });
 
 module.exports.selector.ja.supportAbilities = Object.keys(supportAbilities).map(function (opt) {

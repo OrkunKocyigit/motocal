@@ -19,6 +19,11 @@
       -webkit-user-drag: element;
     }
 
+    [hidden] {
+        /* Polyfill for IE */
+        display: none;
+    }
+
     hr {
         margin-top: 10px;
         margin-bottom: 10px;
@@ -43,6 +48,10 @@
         font-weight: bold;
         font-size: 9pt;
         color: #000;
+    }
+
+    .rbt-menu::-webkit-scrollbar {
+        width: 0.3em;
     }
 
     .charainfo {
