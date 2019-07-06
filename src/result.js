@@ -105,7 +105,7 @@ var ResultList = CreateClass({
             }
 
             var totals = getInitialTotals(prof, chara, summon);
-            treatSupportAbility(totals, chara);
+            treatSupportAbility(totals, chara, totalBuff);
             var itr = combinations.length;
             var totalItr = itr * summon.length * Object.keys(totals).length;
 
@@ -1360,6 +1360,15 @@ var Result = CreateClass({
                         pushSkillInfoElement3("ougiDamageUP", "奥義ダメージアップ", "default");
                         pushSkillInfoElement3("chainDamageLimit", "チェインダメージ上限アップ", "default");
                         pushSkillInfoElement3("chainDamageUP", "チェインダメージアップ", "default");
+                        if (skilldata["criticalDamageLimit"] != 0) {
+                            otherSkillInfo.push(
+                                <span key={key + "-" + "normalCriticalDamageLimit"}>
+                                        <span
+                                            className={"label label-" + "default"}>{intl.translate("CriticalDamageLimit (effective)", locale)}</span>&nbsp;
+                                    {(100.0 * skilldata["criticalDamageLimit"]).toFixed(1) + "%\n(" + (100.0 * skilldata["critRate"]).toFixed(1) + "%)"}&nbsp;
+                                    </span>
+                            );
+                        }
                         pushSkillInfoElement3("uplift", "高揚", "default");
 
                         charaDetail[key].push(<div key={key + "-mainSkillInfo"}>{mainSkillInfo}</div>);
