@@ -31,12 +31,8 @@ class Typeahead extends React.Component {
     handleOnFocus() {
         // Check if web hook is created
         if (this.defaultTypeahead.current) {
-            // Assign last valid item for event purposes
-            this.setState({text: this.props.value.toString()});
             // Scroll down/up to selected item if it exist
             this.updateActiveItem(this.props.stat, this.props.options, this.state.text, this.state.order);
-            // Select input text box for easy editing
-            this.defaultTypeahead.current.getInput().select();
             // Call parent onFocus if it exist
             if (this.props.onFocus) {
                 this.props.onFocus();
@@ -205,7 +201,12 @@ class Typeahead extends React.Component {
      * @param isOpen Whatever menu is opened or closed.
      */
     onMenuToggle(isOpen) {
+        console.log("menu");
         if (isOpen) {
+            // Assign last valid item for event purposes
+            this.setState({text: this.props.value.toString()});
+            // Select input text box for easy editing
+            this.defaultTypeahead.current.getInput().select();
             // Create mutation observer to track screen events when dom is ready
             $('#' + this.props.stat).ready(() => {
                 this.updateScreenOrientation(this, this.defaultTypeahead.current);
