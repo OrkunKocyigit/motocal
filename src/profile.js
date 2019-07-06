@@ -1123,7 +1123,7 @@ var Profile = CreateClass({
                                      id={"tooltip-ougi-damage-limit-buff-detail"}
                                      ref={(ref) => this["tooltip-ougi-damage-limit-buff-detail"] = ref}>
                         <tr>
-                            <th className="bg-primary">{intl.translate("奥義ダメージ上限バフ", locale)}</th>
+                            <th className="bg-primary">{intl.translate("奥義ダメージ上限アップ", locale)}</th>
                             <td>
                                 <Typeahead value={this.state.ougiDamageLimitBuff}
                                            options={selector.buffLevel}
