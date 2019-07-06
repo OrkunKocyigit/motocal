@@ -43,17 +43,18 @@ class Typeahead extends React.Component {
     /**
      * Returns the value of this instance
      * @returns {number|string|any} value
-     * @param _val
+     * @param _result
      */
-    onRequestValue(_val = this.defaultTypeahead.current.state.text) {
+    onRequestValue(_result=this.props.value) {
         switch (this.props.type) {
             case "number":
-                return getValidNumber(_val, this.props.min, this.props.max, this.state.text);
+                _result = getValidNumber(_result, this.props.min, this.props.max, this.state.text);
+                break;
             case "text":
-                return getValidText(_val, this.state.text);
-            default:
-                return _val;
+                _result = getValidText(_result, this.state.text);
+                break;
         }
+        return _result;
     }
 
     /**
@@ -65,7 +66,7 @@ class Typeahead extends React.Component {
             // Get text from input box and convert it to valid data
             if (this.props.onChange) {
                 // Get text from input box and convert it to valid data
-                let e = createDataPlaceholder(this.onRequestValue(this.defaultTypeahead.current.state.text, this, this.defaultTypeahead.current.state.text));
+                let e = createDataPlaceholder(this.onRequestValue());
                 this.props.onChange(this.props.stat, e);
             }
             // Call parent onBlur
@@ -201,7 +202,6 @@ class Typeahead extends React.Component {
      * @param isOpen Whatever menu is opened or closed.
      */
     onMenuToggle(isOpen) {
-        console.log("menu");
         if (isOpen) {
             // Assign last valid item for event purposes
             this.setState({text: this.props.value.toString()});
