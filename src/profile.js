@@ -699,6 +699,8 @@ var Profile = CreateClass({
                                        options={selector.zenithAttack}
                                        onBlur={this.handleOnBlur}
                                        onChange={this.handleEvent}
+                                       min={0}
+                                       max={10000}
                                        stat="zenithAttackBonus">
                             </Typeahead>
                         </td>
@@ -711,6 +713,8 @@ var Profile = CreateClass({
                                        options={selector.zenithHP}
                                        onBlur={this.handleOnBlur}
                                        onChange={this.handleEvent}
+                                       min={0}
+                                       max={10000}
                                        stat="zenithHPBonus">
                             </Typeahead>
                         </td>
@@ -723,6 +727,8 @@ var Profile = CreateClass({
                                        options={selector.zenithPartyHP}
                                        onBlur={this.handleOnBlur}
                                        onChange={this.handleEvent}
+                                       min={0}
+                                       max={10000}
                                        stat="zenithPartyHPBonus">
                             </Typeahead>
                         </td>
