@@ -480,9 +480,7 @@ var ResultList = CreateClass({
                     key={i + 1}>&nbsp;/&nbsp;{getElementColorLabel(chara[i].element, locale)}&nbsp;{charaInfoStr}</span>);
             }
         }
-    
         var addPercent = (value) => intl.translate("percent", locale).replace("{}", value === undefined ? "0" : value);
-
         // Create buff info line
         var buffInfo = [];
         buffInfo.push(intl.translate("通常バフ", locale) + addPercent(prof.normalBuff));
@@ -492,7 +490,6 @@ var ResultList = CreateClass({
         buffInfo.push(intl.translate("TAバフ", locale) + addPercent(prof.taBuff));
         buffInfo.push(intl.translate("追加ダメージバフ", locale) + addPercent(prof.additionalDamageBuff));
         var buffInfoStr = buffInfo.join(", ");
-    
         // Enemy info line
         var enemyInfo = [];
         enemyInfo.push(intl.translate("敵防御固有値", locale) + (prof.enemyDefense === undefined ? "0" : prof.enemyDefense));
@@ -500,7 +497,6 @@ var ResultList = CreateClass({
         enemyInfo.push(intl.translate("烈日の楽園", locale) + (prof.retsujitsuNoRakuen ? intl.translate("アクティブ", locale) : intl.translate("無効", locale)));
         enemyInfo.push(intl.translate("敵非有利耐性", locale) + addPercent(Math.max(0, Math.min(100, parseInt(prof.enemyResistance)))));
         var enemyInfoStr = enemyInfo.join(", ");
-
         if (_ua.Mobile || _ua.Tablet) {
             var changeSortKey = <FormControl componentClass="select" style={{"width": "100%", padding: "0"}}
                                              value={this.props.sortKey}
@@ -979,12 +975,21 @@ var Result = CreateClass({
     onClick: function (e) {
         this.props.onAddToHaisuiData(e.target.id, this.props.summonid)
     },
+    getOugiSkillInfo: function (key, value, skillKey, label, labelType = "primary") {
+        return <span key={key + "-" + skillKey}>
+            <span className={"label label-" + labelType}>{intl.translate(label, this.props.locale)}</span>
+            &nbsp;
+            {(value).toFixed(1)}
+            &nbsp;
+        </span>
+    },
     render: function () {
         var sw = this.props.switcher;
         var arm = this.props.arm;
         var prof = this.props.prof;
         var onClick = this.onClick;
         var locale = this.props.locale;
+        let getOugiSkillInfo = this.getOugiSkillInfo;
 
         return (
             <tbody className="result">
@@ -1373,20 +1378,12 @@ var Result = CreateClass({
                         pushSkillInfoElement3("uplift", "高揚", "default");
 
                         var ougiInfo = [];
-                        var pushOugiInfo = (skillKey, label, labelType = "primary") => {
-                            if (m.data[key][skillKey] != 0.0) {
-                                ougiInfo.push(
-                                    <span key={key + "-" + skillKey}>
-                                            <span
-                                                className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
-                                        {(m.data[key][skillKey]).toFixed(1)}&nbsp;
-                                        </span>
-                                );
+                        let ougiSkills = [["ougiRatio", "奥義倍率"], ["ougiFixedDamage", "奥義固定ダメージ"], ["ougiBonusPlainDamage", "奥義追加ダメージ(無属性固定)"]];
+                        for (let skill of ougiSkills) {
+                            if (m.data[key][skill[0]] !== 0.0) {
+                                ougiInfo.push(getOugiSkillInfo(key, m.data[key][skill[0]], skill[0], skill[1], "warning"));
                             }
-                        };
-                        pushOugiInfo("ougiRatio", "奥義倍率", "warning");
-                        pushOugiInfo("ougiFixedDamage", "奥義固定ダメージ", "warning");
-                        pushOugiInfo("ougiBonusPlainDamage", "奥義追加ダメージ(無属性固定)", "warning");
+                        }
 
                         charaDetail[key].push(<div key={key + "-mainSkillInfo"}>{mainSkillInfo}</div>);
                         charaDetail[key].push(<div key={key + "-multipleAttackInfo"}>{multipleAttackSkillInfo}</div>);

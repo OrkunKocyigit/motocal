@@ -225,8 +225,12 @@ var Notice = CreateClass({
 
                 <h3>注記</h3>
                 <ul className="list-group">
-                    <li className="list-group-item list-group-item-info"><font color="#6c2c2f">情報求:</font> 武器やキャラのステータスズレ、Rank200辺りからの基礎攻撃力増加量、キャラの基礎連撃率(現在対応済リストは<u><a href="https://github.com/MotocalDevelopers/motocal/blob/master/scripts/chara_data_converter.py" target="_blank">こちら</a></u>の100行辺りから。デフォルト値はDA7%,TA3%)、各種計算式の検証データ。</li>
-                    <li className="list-group-item list-group-item-info"><font color="#6c2c2f">未対応:</font> バフの効果ターン・リキャスト、経過ターンで増減するスキル、多数の英雄武器の効果、仲間が奥義を使用した時の奥義ゲージ上昇、奥義ゲージ上昇によりゲージ最大値に達したときの溢れ分。</li>
+                    <li className="list-group-item list-group-item-info">武器やキャラのステータスズレ、Rank200辺りからの基礎攻撃力増加量、キャラの基礎連撃率(現在対応済リストは
+                        <u>
+                            <a href="https://github.com/MotocalDevelopers/motocal/blob/master/scripts/chara_data_converter.py" target="_blank">こちら</a>
+                        </u>の100行辺りから。デフォルト値はDA7%,TA3%)、各種計算式の検証データ。
+                    </li>
+                    <li className="list-group-item list-group-item-info">バフの効果ターン・リキャスト、経過ターンで増減するスキル、多数の英雄武器の効果、仲間が奥義を使用した時の奥義ゲージ上昇、奥義ゲージ上昇によりゲージ最大値に達したときの溢れ分。</li>
                     <li className="list-group-item list-group-item-info">編成データを読み込むとホワイトアウトしてしまう場合があります。恐らく仕様変更が原因なので、新しく編成を作り直すか対策パッチをお待ち下さい。</li>
                     <li className="list-group-item list-group-item-info">乱数や技巧によるブレがあるため、実際のダメージとは多少異なる可能性があります。</li>
                     <li className="list-group-item list-group-item-info">キャラの基礎連撃率やサポアビ等が追加されても既存の編成データは自動で更新されません。キャラの入れ直しをお願いします。</li>

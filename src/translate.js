@@ -1680,7 +1680,7 @@ var multiLangData = {
     "パーティ全体バフ": {
         "en": "Buff for Party",
         "ja": "パーティ全体バフ",
-        "zh": "Buff for Party",
+        "zh": "全队Buff",
     },
     "敵": {
         "en": "Enemy",
