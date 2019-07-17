@@ -971,13 +971,17 @@ var ResultList = CreateClass({
     }
 });
 
+const getLabelClassName = function(labelType) {
+    return "label label-" + labelType;
+};
+
 var Result = CreateClass({
     onClick: function (e) {
         this.props.onAddToHaisuiData(e.target.id, this.props.summonid)
     },
     getOugiSkillInfo: function (key, value, skillKey, label, labelType = "primary") {
         return <span key={key + "-" + skillKey}>
-            <span className={"label label-" + labelType}>{intl.translate(label, this.props.locale)}</span>
+            <span className={getLabelClassName(labelType)}>{intl.translate(label, this.props.locale)}</span>
             &nbsp;
             {(value).toFixed(1)}
             &nbsp;
@@ -1238,7 +1242,7 @@ var Result = CreateClass({
                                 mainSkillInfo.push(
                                     <span key={key + "-" + skillKey}>
                                             <span
-                                                className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
+                                                className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>&nbsp;
                                         {(100.0 * (skilldata[skillKey] - 1.0)).toFixed(1)}%&nbsp;
                                         </span>
                                 );
@@ -1270,7 +1274,7 @@ var Result = CreateClass({
                             if (value != 0.0) {
                                 multipleAttackSkillInfo.push(
                                     <span key={key + "-" + skillKey}>
-                                        <span className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
+                                        <span className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>&nbsp;
                                         <span className={isOver ? "is-over" : ""}>{value.toFixed(1)}%</span>&nbsp;
                                     </span>
                                 );
@@ -1361,7 +1365,7 @@ var Result = CreateClass({
                                 otherSkillInfo.push(
                                     <span key={key + "-" + skillKey}>
                                             <span
-                                                className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
+                                                className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>&nbsp;
                                         {(100.0 * skilldata[skillKey]).toFixed(1)}%&nbsp;
                                         </span>
                                 );
