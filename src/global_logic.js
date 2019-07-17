@@ -218,10 +218,20 @@ module.exports.calcDefenseDebuff = function (defense, debuff) {
     return Math.max(1, defense * (1 - debuff * 0.01));
 };
 
-module.exports.calcDamage = function (summedAttack, totalSkillCoeff, criticalRatio, enemyDefense, defenseDebuff, enemyResistance, additionalDamage, damageUP, damageLimit) {
+/**
+ * Calculates raw damage without any limits
+ * @param summedAttack
+ * @param enemyDef
+ * @param totalSkillCoeff
+ * @param criticalRatio
+ * @returns {number}
+ */
+module.exports.calculateRawDamage = function (summedAttack, enemyDef, totalSkillCoeff, criticalRatio) {
+    return Math.ceil(summedAttack / enemyDef) * totalSkillCoeff * criticalRatio;
+};
+
+module.exports.calcDamage = function (damage, enemyResistance, additionalDamage, damageUP, damageLimit) {
     // Damage calculation
-    var def = module.exports.calcDefenseDebuff(enemyDefense, defenseDebuff);
-    var damage = Math.ceil(summedAttack / def) * totalSkillCoeff * criticalRatio;
     var overedDamage = 0;
 
     var limitValues = [[600000, 0.01], [500000, 0.05], [400000, 0.60], [300000, 0.80]];
@@ -733,10 +743,13 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         
 
         // "damage" is a single attack damage without additional damage (with attenuation and skill correction)
-        var damage = module.exports.calcDamage(summedAttack, totalSkillCoeff, criticalRatio, prof.enemyDefense, prof.defenseDebuff, enemyResistance, additionalDamage, damageUP, damageLimit);
+        let enemyDef = module.exports.calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff);
+        let rawDamage = module.exports.calculateRawDamage(summedAttack, enemyDef, totalSkillCoeff, criticalRatio);
+        let damage = module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
 
         // Use damage in case of no critical to correct skill expectation
-        var damageWithoutCritical = module.exports.calcDamage(summedAttack, totalSkillCoeff, 1.0, prof.enemyDefense, prof.defenseDebuff, enemyResistance, additionalDamage, damageUP, damageLimit);
+        let rawDamageWithoutCritical = module.exports.calculateRawDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0);
+        let damageWithoutCritical = module.exports.calcDamage(rawDamageWithoutCritical, enemyResistance, additionalDamage, damageUP, damageLimit);
 
         // Expected critical skill ratio
         var effectiveCriticalRatio = damage / damageWithoutCritical;
@@ -780,7 +793,6 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         var debuffResistanceByNormal = 0.01 * totals[key]["cosmosDebuffResistance"]; 
         var debuffResistance = 100 * (1.0 + debuffResistanceByHigo) * (1.0 + debuffResistanceByNormal) - 100;
 
-        let enemyDef = module.exports.calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff);
         let ougiRatio = totals[key]["ougiRatio"];
         let rawOugiDamage = module.exports.calcRawOugiDamage(ougiDamageUP, summedAttack, enemyDef, totalSkillCoeff, criticalRatio, key, ougiRatio);
         let ougiBonusPlainDamage = totals[key]["ougiBonusPlainDamage"];
@@ -3045,10 +3057,13 @@ module.exports.generateHaisuiData = function (res, arml, summon, prof, chara, st
 
                     let damageUP = onedata[key].skilldata.damageUP;
                     let enemyResistance = onedata[key].skilldata.enemyResistance;
-                    var newDamage = module.exports.calcDamage(summedAttack, newTotalSkillCoeff, criticalRatio, prof.enemyDefense, prof.defenseDebuff, enemyResistance, onedata[key].skilldata.additionalDamage, damageUP, onedata[key].skilldata.damageLimit);
+                    let additionalDamage = onedata[key].skilldata.additionalDamage;
+                    let damageLimit = onedata[key].skilldata.damageLimit;
                     let enemyDef = module.exports.calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff);
-                    let ougiDamageUP = onedata[key].skilldata.ougiDamageUP;
+                    let rawDamage = module.exports.calculateRawDamage(summedAttack, enemyDef, newTotalSkillCoeff, criticalRatio);
+                    let newDamage = module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
 
+                    let ougiDamageUP = onedata[key].skilldata.ougiDamageUP;
                     let ougiRatio = onedata[key]["ougiRatio"];
                     let rawOugiDamage = module.exports.calcRawOugiDamage(ougiDamageUP, summedAttack, enemyDef, newTotalSkillCoeff, criticalRatio, key, ougiRatio);
                     let ougiDamageLimit = onedata[key].skilldata.ougiDamageLimit;
@@ -3327,7 +3342,11 @@ module.exports.generateSimulationData = function (res, turnBuff, arml, summon, p
                         }
                     } else {
                         // Regular attack
-                        var newDamage = module.exports.calcDamage(displayAttack, totalSkillCoeff, criticalRatio, prof.enemyDefense, prof.defenseDebuff, enemyResistance, onedata[key].skilldata.additionalDamage, damageUP, onedata[key].skilldata.damageLimit);
+                        let enemyDef = module.exports.calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff);
+                        let rawDamage = module.exports.calculateRawDamage(displayAttack, enemyDef, totalSkillCoeff, criticalRatio);
+                        let additionalDamage = onedata[key].skilldata.additionalDamage;
+                        let damageLimit = onedata[key].skilldata.damageLimit;
+                        let newDamage = module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
                         if (key == "Djeeta") {
                             ExpectedDamage[t].push(parseInt(newDamage * onedata[key].expectedAttack));
                             AverageExpectedDamage[t][j + 1] += parseInt(onedata[key].expectedAttack * newDamage / cnt)
