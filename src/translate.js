@@ -1,5 +1,5 @@
 var React = require('react');
-
+let getLanguageDataService = require('./services/getLanguageData').doGet;
 let multiLangData;
 
 // Language settings
@@ -16,20 +16,12 @@ module.exports.getLocale = function () {
     return lang;
 };
 
-// Load Language
-const getLanguageData = function() {
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", "./langData.json", false);
-    xhr.onload = () => {
-        multiLangData = JSON.parse(xhr.responseText);
-    };
-    xhr.send(null);
-};
-
 module.exports.translate = function (key, locale) {
     try {
         if (multiLangData === undefined) {
-            getLanguageData();
+            getLanguageDataService((result) => {
+                multiLangData = result;
+            });
         }
         if (key == undefined || key == "") return "";
         if (locale != "ja" && locale != "en" && locale != "zh") return multiLangData[key]["ja"];
