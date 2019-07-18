@@ -58,6 +58,66 @@ const appendPlusBonusToCharaName = function(name, plusBonus, _buffer=" HP") {
 
 module.exports.appendPlusBonusToCharaName = appendPlusBonusToCharaName;
 
+/**
+ * Adds percentage to end of the string
+ * @param value value to be add
+ * @returns {string}new string
+ */
+const addPercent = function(value) {
+    return `${value === undefined ? "0" : value}%`
+};
+
+module.exports.addPercent = addPercent;
+
+const enemyInfoStringItems = GlobalConst.enemyInfoStringItems;
+
+const buffInfoStringItems = GlobalConst.buffInfoStringItems;
+
+/**
+ * Returns value for Info Item
+ * @param {boolean}hasPercentage has percentage sign %
+ * @param {*}propValue value
+ * @param {string}locale
+ * @param {string}_value internal value for result
+ * @returns {*}
+ */
+const getInfoStringValue = function(hasPercentage, propValue, locale, _value = "") {
+    if (hasPercentage) {
+        _value = addPercent(propValue);
+    } else {
+        if (typeof propValue === "boolean") {
+            if (propValue) {
+                _value = intl.translate("アクティブ", locale);
+            } else {
+                _value = intl.translate("無効", locale);
+            }
+        } else {
+            _value = propValue;
+        }
+    }
+    return _value;
+};
+
+const createEnemyInfoString = function(locale, prof) {
+    return createInfoString(enemyInfoStringItems, locale, prof);
+};
+
+module.exports.createEnemyInfoString = createEnemyInfoString;
+
+const createBuffInfoString = function(locale, prof) {
+    return createInfoString(buffInfoStringItems, locale, prof);
+};
+
+module.exports.createBuffInfoString = createBuffInfoString;
+
+const createInfoString = function(infoStringItems, locale, prof, _buffer=[]) {
+    for (let infoStringItem of infoStringItems) {
+        let value = getInfoStringValue(infoStringItem[2], prof[infoStringItem[1]], locale);
+        _buffer.push(`${intl.translate(infoStringItem[0], locale)} ${value}`);
+    }
+    return _buffer.join(", ");
+};
+
 var ResultList = CreateClass({
     calculateResult: function (newprops) {
         var prof = newprops.profile;
@@ -493,23 +553,10 @@ var ResultList = CreateClass({
                     key={i + 1}>&nbsp;/&nbsp;{getElementColorLabel(chara[i].element, locale)}&nbsp;{charaInfoStr}</span>);
             }
         }
-        var addPercent = (value) => intl.translate("percent", locale).replace("{}", value === undefined ? "0" : value);
         // Create buff info line
-        var buffInfo = [];
-        buffInfo.push(intl.translate("通常バフ", locale) + addPercent(prof.normalBuff));
-        buffInfo.push(intl.translate("属性バフ", locale) + addPercent(prof.elementBuff));
-        buffInfo.push(intl.translate("その他バフ", locale) + addPercent(prof.otherBuff));
-        buffInfo.push(intl.translate("DAバフ", locale) + addPercent(prof.daBuff));
-        buffInfo.push(intl.translate("TAバフ", locale) + addPercent(prof.taBuff));
-        buffInfo.push(intl.translate("追加ダメージバフ", locale) + addPercent(prof.additionalDamageBuff));
-        var buffInfoStr = buffInfo.join(", ");
+        let buffInfoStr = createBuffInfoString(locale, prof);
         // Enemy info line
-        var enemyInfo = [];
-        enemyInfo.push(intl.translate("敵防御固有値", locale) + (prof.enemyDefense === undefined ? "0" : prof.enemyDefense));
-        enemyInfo.push(intl.translate("防御デバフ合計", locale) + addPercent(prof.defenseDebuff));
-        enemyInfo.push(intl.translate("烈日の楽園", locale) + (prof.retsujitsuNoRakuen ? intl.translate("アクティブ", locale) : intl.translate("無効", locale)));
-        enemyInfo.push(intl.translate("敵非有利耐性", locale) + addPercent(Math.max(0, Math.min(100, parseInt(prof.enemyResistance)))));
-        var enemyInfoStr = enemyInfo.join(", ");
+        let enemyInfoStr = createEnemyInfoString(locale, prof);
         if (_ua.Mobile || _ua.Tablet) {
             var changeSortKey = <FormControl componentClass="select" style={{"width": "100%", padding: "0"}}
                                              value={this.props.sortKey}

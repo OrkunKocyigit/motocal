@@ -98,6 +98,27 @@ module.exports.hollowskyNames = [
     "虚空の",
     "Hollowsky"
 ];
+
+const enemyInfoStringItems = [
+    ["敵防御固有値", "enemyDefense", false],
+    ["防御デバフ合計", "defenseDebuff", true],
+    ["烈日の楽園", "retsujitsuNoRakuen", false],
+    ["敵非有利耐性", "enemyResistance", true]
+];
+
+module.exports.enemyInfoStringItems = enemyInfoStringItems;
+
+const buffInfoStringItems = [
+    ["通常バフ", "normalBuff", true],
+    ["属性バフ", "elementBuff", true],
+    ["その他バフ", "otherBuff", true],
+    ["DAバフ", "daBuff", true],
+    ["TAバフ", "taBuff", true],
+    ["追加ダメージバフ", "additionalDamageBuff", true]
+];
+
+module.exports.buffInfoStringItems = buffInfoStringItems;
+
 var opusNames = [
     "of Repudiation",
     "絶対否定の",
