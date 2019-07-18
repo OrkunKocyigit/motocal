@@ -1035,6 +1035,8 @@ const getLabelClassName = function(labelType) {
     return "label label-" + labelType;
 };
 
+module.exports.getLabelClassName = getLabelClassName;
+
 var Result = CreateClass({
     onClick: function (e) {
         this.props.onAddToHaisuiData(e.target.id, this.props.summonid)

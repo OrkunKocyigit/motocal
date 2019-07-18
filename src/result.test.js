@@ -1,7 +1,10 @@
+let React = require('react');
 const {
+    Result,
     appendPlusBonusToCharaName,
     createEnemyInfoString,
-    createBuffInfoString
+    createBuffInfoString,
+    getLabelClassName
 } = require('./result');
 
 const {
@@ -103,5 +106,11 @@ describe('#createBuffInfoString', () => {
         mockData.normalBuff = undefined;
         let result = createBuffInfoString(locale, mockData);
         expect(result.indexOf("0%") >= 0).toBeTruthy();
+    });
+});
+
+describe('#getLabelClassName', () => {
+    test('valid value', () => {
+        expect(getLabelClassName("Orkun")).toBe("label label-Orkun");
     });
 });
