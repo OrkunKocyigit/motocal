@@ -41,6 +41,23 @@ var {
     getInitialTotals, getTypeBonus, getTypeBonusStr, calcCriticalDeviation
 } = require('./global_logic.js');
 
+
+/**
+ * Adds plus bonus to char name if it exists
+ * @param {string}name char name
+ * @param {number}plusBonus plus bonus value
+ * @param {string}_buffer internal value to hold result
+ * @returns {string} composite string
+ */
+const appendPlusBonusToCharaName = function(name, plusBonus, _buffer=" HP") {
+    if (plusBonus > 0) {
+        _buffer = _buffer.replace(/^/, `+${plusBonus}`);
+    }
+    return _buffer.replace(/^/, name);
+};
+
+module.exports.appendPlusBonusToCharaName = appendPlusBonusToCharaName;
+
 var ResultList = CreateClass({
     calculateResult: function (newprops) {
         var prof = newprops.profile;
@@ -465,11 +482,7 @@ var ResultList = CreateClass({
         var charaInfo = [<span key={0}>{getElementColorLabel(prof.element, locale)}&nbsp;{charaInfoStr}</span>];
         for (var i = 0; i < chara.length; i++) {
             if (chara[i].name != "" && chara[i].isConsideredInAverage) {
-                var plusBonus　= "";
-                if (chara[i].plusBonus > 0) {
-                    plusBonus = "+" + chara[i].plusBonus;
-                }
-                charaInfoStr = chara[i].name + plusBonus + " HP";
+                charaInfoStr = appendPlusBonusToCharaName(chara[i].name, chara[i].plusBonus);
                 if (chara[i].remainHP != undefined) {
                     charaInfoStr += (parseInt(chara[i].remainHP) < parseInt(prof.hp)) ? chara[i].remainHP : prof.hp
                 } else {
