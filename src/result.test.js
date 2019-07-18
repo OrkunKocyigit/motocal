@@ -98,4 +98,10 @@ describe('#createBuffInfoString', () => {
         expect(result.indexOf("4%") >= 0).toBeTruthy();
         expect(result.indexOf("5%") >= 0).toBeTruthy();
     });
+
+    test('undefined values', () => {
+        mockData.normalBuff = undefined;
+        let result = createBuffInfoString(locale, mockData);
+        expect(result.indexOf("0%") >= 0).toBeTruthy();
+    });
 });

@@ -81,7 +81,7 @@ const buffInfoStringItems = GlobalConst.buffInfoStringItems;
  * @param {string}_value internal value for result
  * @returns {*}
  */
-const getInfoStringValue = function(hasPercentage, propValue, locale, _value = "") {
+const getInfoStringValue = function (hasPercentage, propValue, locale, _value = "") {
     if (hasPercentage) {
         _value = addPercent(propValue);
     } else {
@@ -98,25 +98,25 @@ const getInfoStringValue = function(hasPercentage, propValue, locale, _value = "
     return _value;
 };
 
-const createEnemyInfoString = function(locale, prof) {
-    return createInfoString(enemyInfoStringItems, locale, prof);
-};
-
-module.exports.createEnemyInfoString = createEnemyInfoString;
-
-const createBuffInfoString = function(locale, prof) {
-    return createInfoString(buffInfoStringItems, locale, prof);
-};
-
-module.exports.createBuffInfoString = createBuffInfoString;
-
-const createInfoString = function(infoStringItems, locale, prof, _buffer=[]) {
+const createInfoString = function (infoStringItems, locale, prof, _buffer = []) {
     for (let infoStringItem of infoStringItems) {
         let value = getInfoStringValue(infoStringItem[2], prof[infoStringItem[1]], locale);
         _buffer.push(`${intl.translate(infoStringItem[0], locale)} ${value}`);
     }
     return _buffer.join(", ");
 };
+
+const createEnemyInfoString = function (locale, prof) {
+    return createInfoString(enemyInfoStringItems, locale, prof);
+};
+
+module.exports.createEnemyInfoString = createEnemyInfoString;
+
+const createBuffInfoString = function (locale, prof) {
+    return createInfoString(buffInfoStringItems, locale, prof);
+};
+
+module.exports.createBuffInfoString = createBuffInfoString;
 
 var ResultList = CreateClass({
     calculateResult: function (newprops) {
