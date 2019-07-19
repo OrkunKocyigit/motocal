@@ -11,7 +11,8 @@ const {
     calcOugiDamage,
     calcChainDamageLimit,
     calcDamageWithoutCritical,
-    calcAttackDamage
+    calcAttackDamage,
+    calcDamageLimitAmount
 } = require('./global_logic.js');
 const {
     LIMIT
@@ -22,6 +23,27 @@ jest.mock("./services/getLanguageData");
 describe('#getTypeBonus', () => {
     test('when self element and enemy element is not set, type bonus is 1', () => {
         expect(getTypeBonus(undefined, undefined)).toBe(1)
+    });
+});
+
+describe('#calcDamageLimitAmount', () => {
+    test('Zeroes', () => {
+        expect(calcDamageLimitAmount(0, 0, 0, 0, false)).toBe(0);
+    });
+
+    test('Ones', () => {
+        expect(calcDamageLimitAmount(1, 0, 0, 0, false)).toBe(1);
+        expect(calcDamageLimitAmount(0, 1, 0, 0, false)).toBe(1);
+        expect(calcDamageLimitAmount(0, 0, 1, 0, false)).toBe(0.2);
+        expect(calcDamageLimitAmount(0, 0, 0, 1, false)).toBe(0.01);
+    });
+
+    test('Wedding Ring', () => {
+        expect(calcDamageLimitAmount(0, 0, 0, 0, true)).toBe(0.05);
+    });
+
+    test('Negative', () => {
+        expect(calcDamageLimitAmount(-10, 0, 0, 0, true)).toBe(0);
     });
 });
 

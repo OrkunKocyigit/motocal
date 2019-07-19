@@ -209,7 +209,7 @@ var Summon = CreateClass({
             criticalRatio: 0.0,
             ougiDamage : 0.0,
             tenshiDamageUP : 0.0,
-            damageLimit : 0.0
+            buffDamageLimit : 0.0
         };
     },
     componentDidMount: function () {
@@ -439,8 +439,8 @@ var Summon = CreateClass({
                     <tr>
                         <th className="bg-primary">{intl.translate("ダメージ上限加護", locale)}</th>
                         <td><InputGroup>
-                            <FormControl type="number" min="0" value={this.state.damageLimit} onBlur={this.handleOnBlur}
-                                         onChange={this.handleEvent.bind(this, "damageLimit")}/><InputGroup.Addon>%</InputGroup.Addon>
+                            <FormControl type="number" min="0" value={this.state.buffDamageLimit} onBlur={this.handleOnBlur}
+                                         onChange={this.handleEvent.bind(this, "buffDamageLimit")}/><InputGroup.Addon>%</InputGroup.Addon>
                         </InputGroup></td>
                     </tr>
                     </TextWithTooltip>

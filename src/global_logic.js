@@ -480,24 +480,6 @@ const calcChainDamageLimit = function (totalChainDamageLimit, totalNormalChainDa
 module.exports.calcChainDamageLimit = calcChainDamageLimit;
 
 /**
- * Calculates damage without any crit
- * @param summedAttack
- * @param enemyDef
- * @param totalSkillCoeff
- * @param enemyResistance
- * @param additionalDamage
- * @param damageUP
- * @param damageLimit
- * @returns {number}
- */
-const calcDamageWithoutCritical = function (summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit) {
-    return calcAttackDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0, enemyResistance, additionalDamage, damageUP, damageLimit);
-};
-
-module.exports.calcDamageWithoutCritical = calcDamageWithoutCritical;
-
-
-/**
  * Calculates attack damage
  * @param summedAttack
  * @param enemyDef
@@ -514,7 +496,46 @@ const calcAttackDamage = function (summedAttack, enemyDef, totalSkillCoeff, crit
     return module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
 };
 
+/**
+ * Calculates damage without any crit
+ * @param summedAttack
+ * @param enemyDef
+ * @param totalSkillCoeff
+ * @param enemyResistance
+ * @param additionalDamage
+ * @param damageUP
+ * @param damageLimit
+ * @returns {number}
+ */
+const calcDamageWithoutCritical = function (summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit) {
+    return calcAttackDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0, enemyResistance, additionalDamage, damageUP, damageLimit);
+};
+
+module.exports.calcDamageWithoutCritical = calcDamageWithoutCritical;
+
 module.exports.calcAttackDamage = calcAttackDamage;
+
+/**
+ *
+ * @param buffDamageLimit
+ * @param damageLimitBuff
+ * @param normalDamageLimit
+ * @param summonBuffDamageLimit
+ * @param hasWeddingRing
+ * @returns {number}
+ */
+const calcDamageLimitAmount = function(buffDamageLimit, damageLimitBuff, normalDamageLimit, summonBuffDamageLimit, hasWeddingRing) {
+    buffDamageLimit += damageLimitBuff;
+    buffDamageLimit += Math.min(0.20, normalDamageLimit);
+    buffDamageLimit += 0.01 * summonBuffDamageLimit;
+    if (hasWeddingRing) {
+        buffDamageLimit += 0.05;
+    }
+    buffDamageLimit = Math.max(buffDamageLimit, 0.0);
+    return buffDamageLimit;
+};
+
+module.exports.calcDamageLimitAmount = calcDamageLimitAmount;
 
 module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
     var res = {};
@@ -536,7 +557,8 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         if (key == "Djeeta") {
             hpCoeff += 0.01 * totals["Djeeta"]["job"].shugoBonus;
         }
-        if (totals[key]["EXLB"]["WED"]) {
+        let hasWeddingRing = totals[key]["EXLB"]["WED"];
+        if (hasWeddingRing) {
             hpCoeff += 0.10;
         }
         hpCoeff *= 1.0 + totals[key]["HPBuff"];
@@ -630,7 +652,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         otherCoeff *= 1.0 + buff["other2"];
         otherCoeff *= 1.0 + totals[key]["otherBuff"];
         otherCoeff *= 1.0 + totals[key]["otherBuff2"];
-        if (totals[key]["EXLB"]["WED"]) {
+        if (hasWeddingRing) {
             otherCoeff *= 1.10;
         }
         otherCoeff *= prof.retsujitsuNoRakuen ? 1.20 : 1;
@@ -769,13 +791,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         additionalDamage += buff["additionalDamage"];
 
         // Damage limit UP = Overall buff + Personal buff + skill
-        var damageLimit = buff["damageLimit"];
-        damageLimit += totals[key]["damageLimitBuff"];
-        damageLimit += Math.min(0.20, totals[key]["normalDamageLimit"]);
-        damageLimit += 0.01 * totalSummon["damageLimit"];
-        if (totals[key]["EXLB"]["WED"]) {
-            damageLimit += 0.05;
-        }
+        let damageLimit = calcDamageLimitAmount(buff["damageLimit"], totals[key]["damageLimitBuff"], totals[key]["normalDamageLimit"], totalSummon["damageLimit"], hasWeddingRing);
 
         // Mystery damage upper limit UP = whole buff + individual buff + skill + damage upper limit UP minutes
         // The upper limit of skill of mystery damage is 30%
@@ -789,7 +805,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         ougiDamageLimit += 0.01 * totalSummon["damageLimit"];
         ougiDamageLimit += 0.01 * totals[key]["LB"]["OugiDamageLimit"];
         ougiDamageLimit += 0.01 * totals[key]["EXLB"]["OugiDamageLimit"];
-        if (totals[key]["EXLB"]["WED"]) {
+        if (hasWeddingRing) {
             ougiDamageLimit += 0.05;
         }
 
