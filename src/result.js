@@ -1436,7 +1436,7 @@ var Result = CreateClass({
                         pushSkillInfoElement3("ougiGageBuff", "奥義ゲージ上昇量", "default");
                         pushSkillInfoElement3("additionalDamage", "追加ダメージ", "default");
                         pushSkillInfoElement3("damageUP", "与ダメージ上昇", "default");
-                        pushSkillInfoElement3("buffDamageLimit", "ダメージ上限アップ", "default");
+                        pushSkillInfoElement3("damageLimit", "ダメージ上限アップ", "default");
                         pushSkillInfoElement3("ougiDamageLimit", "奥義ダメージ上限アップ", "default");
                         pushSkillInfoElement3("ougiDamageUP", "奥義ダメージアップ", "default");
                         pushSkillInfoElement3("chainDamageLimit", "チェインダメージ上限アップ", "default");
