@@ -479,6 +479,24 @@ const calcChainDamageLimit = function (totalChainDamageLimit, totalNormalChainDa
 
 module.exports.calcChainDamageLimit = calcChainDamageLimit;
 
+/**
+ * Calculates damage without any crit
+ * @param summedAttack
+ * @param enemyDef
+ * @param totalSkillCoeff
+ * @param enemyResistance
+ * @param additionalDamage
+ * @param damageUP
+ * @param damageLimit
+ * @returns {number}
+ */
+const calcDamageWithoutCritical = function(summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit) {
+    let rawDamageWithoutCritical = module.exports.calcRawDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0);
+    return module.exports.calcDamage(rawDamageWithoutCritical, enemyResistance, additionalDamage, damageUP, damageLimit);
+};
+
+module.exports.calcDamageWithoutCritical = calcDamageWithoutCritical;
+
 module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
     var res = {};
 
@@ -532,7 +550,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
             summedAttack += totals[key]["LB"].ATK;
             summedAttack += totals[key]["EXLB"].ATK;
             summedAttack += totals[key]["plusBonus"] * 3;
-            
+
             // HP
             displayHP += totals[key]["LB"].HP;
             displayHP += totals[key]["EXLB"].HP;
@@ -584,7 +602,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         elementCoeff += totals[key]["opusnormalElement"] * totalSummon["zeus"];
         elementCoeff += totals[key]["opusmagnaElement"] * totalSummon["magna"];
         elementCoeff += 0.01 * totals[key]["LB"].Element;
-        
+
         if (key == "Djeeta") {
             elementCoeff += buff["zenithElement"];
         }
@@ -676,7 +694,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
 
         // Fit 0% < TA < 100%
         totalTA = Math.min(1.0, Math.max(0.0, totalTA));
-        
+
         var taRate = Math.min(1.0, Math.floor(totalTA * 100) / 100); // Truncated values are used to calculate multi attack.
         var daRate = Math.min(1.0, Math.floor(totalDA * 100) / 100);
         var expectedAttack = 3.0 * taRate + (1.0 - taRate) * (2.0 * daRate + (1.0 - daRate));
@@ -755,7 +773,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         if (totals[key]["EXLB"]["WED"]) {
             ougiDamageLimit += 0.05;
         }
-        
+
         // Chain Burst
         let chainDamageLimit = calcChainDamageLimit(totals[key]["chainDamageLimit"], totals[key]["normalChainDamageLimit"], totalSummon["zeus"], buff["zenithChainDamageLimit"]);
 
@@ -766,8 +784,7 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         let damage = module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
 
         // Use damage in case of no critical to correct skill expectation
-        let rawDamageWithoutCritical = module.exports.calcRawDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0);
-        let damageWithoutCritical = module.exports.calcDamage(rawDamageWithoutCritical, enemyResistance, additionalDamage, damageUP, damageLimit);
+        let damageWithoutCritical = calcDamageWithoutCritical(summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit);
 
         // Expected critical skill ratio
         var effectiveCriticalRatio = damage / damageWithoutCritical;
