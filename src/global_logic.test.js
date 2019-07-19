@@ -10,7 +10,8 @@ const {
     calcRawOugiDamage,
     calcOugiDamage,
     calcChainDamageLimit,
-    calcDamageWithoutCritical
+    calcDamageWithoutCritical,
+    calcAttackDamage
 } = require('./global_logic.js');
 const {
     LIMIT
@@ -32,6 +33,18 @@ describe('#calcDamageWithoutCritical', () => {
 
     test('Ones', () => {
         expect(calcDamageWithoutCritical(1, 1, 1, 0, 0,0,0)).toBe(1);
+    });
+});
+
+describe('#calcAttackDamage', () => {
+    test('Zeroes', () => {
+        expect(calcAttackDamage(0, 5, 1, 1, 0,0,0,0)).toBe(0);
+        expect(calcAttackDamage(10, 5, 0, 1, 0,0,0,0)).toBe(0);
+        expect(calcAttackDamage(10, 5, 1, 0, 0,0,0,0)).toBe(0);
+    });
+
+    test('Ones', () => {
+        expect(calcAttackDamage(10, 10, 1, 1, 0,0,0,0)).toBe(1);
     });
 });
 

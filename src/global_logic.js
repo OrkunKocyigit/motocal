@@ -490,12 +490,31 @@ module.exports.calcChainDamageLimit = calcChainDamageLimit;
  * @param damageLimit
  * @returns {number}
  */
-const calcDamageWithoutCritical = function(summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit) {
-    let rawDamageWithoutCritical = module.exports.calcRawDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0);
-    return module.exports.calcDamage(rawDamageWithoutCritical, enemyResistance, additionalDamage, damageUP, damageLimit);
+const calcDamageWithoutCritical = function (summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit) {
+    return calcAttackDamage(summedAttack, enemyDef, totalSkillCoeff, 1.0, enemyResistance, additionalDamage, damageUP, damageLimit);
 };
 
 module.exports.calcDamageWithoutCritical = calcDamageWithoutCritical;
+
+
+/**
+ * Calculates attack damage
+ * @param summedAttack
+ * @param enemyDef
+ * @param totalSkillCoeff
+ * @param criticalRatio
+ * @param enemyResistance
+ * @param additionalDamage
+ * @param damageUP
+ * @param damageLimit
+ * @returns {number}
+ */
+const calcAttackDamage = function (summedAttack, enemyDef, totalSkillCoeff, criticalRatio, enemyResistance, additionalDamage, damageUP, damageLimit) {
+    let rawDamage = module.exports.calcRawDamage(summedAttack, enemyDef, totalSkillCoeff, criticalRatio);
+    return module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
+};
+
+module.exports.calcAttackDamage = calcAttackDamage;
 
 module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
     var res = {};
@@ -777,11 +796,9 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         // Chain Burst
         let chainDamageLimit = calcChainDamageLimit(totals[key]["chainDamageLimit"], totals[key]["normalChainDamageLimit"], totalSummon["zeus"], buff["zenithChainDamageLimit"]);
 
-
         // "damage" is a single attack damage without additional damage (with attenuation and skill correction)
         let enemyDef = module.exports.calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff);
-        let rawDamage = module.exports.calcRawDamage(summedAttack, enemyDef, totalSkillCoeff, criticalRatio);
-        let damage = module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
+        let damage = calcAttackDamage(summedAttack, enemyDef, totalSkillCoeff, criticalRatio, enemyResistance, additionalDamage, damageUP, damageLimit);
 
         // Use damage in case of no critical to correct skill expectation
         let damageWithoutCritical = calcDamageWithoutCritical(summedAttack, enemyDef, totalSkillCoeff, enemyResistance, additionalDamage, damageUP, damageLimit);
