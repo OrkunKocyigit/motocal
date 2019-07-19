@@ -5,8 +5,15 @@ const {
     isDarkOpus,
     calcOugiFixedDamage,
     sum,
-    filterCombinations
+    filterCombinations,
+    calcRawDamage,
+    calcRawOugiDamage,
+    calcOugiDamage,
+    calcChainDamageLimit
 } = require('./global_logic.js');
+const {
+    LIMIT
+} = require('./global_const');
 
 jest.mock("./services/getLanguageData");
 
@@ -16,6 +23,59 @@ describe('#getTypeBonus', () => {
     });
 });
 
+describe('#calcChainDamageLimit', () => {
+    test('Zeroes', () => {
+        expect(calcChainDamageLimit(0, 1,0,0)).toBe(0);
+        expect(calcChainDamageLimit(0, 0,1,0)).toBe(0);
+    });
+
+    test('Ones', () => {
+        expect(calcChainDamageLimit(100, 1,0,0)).toBe(Math.min(1, LIMIT.chainDamageLimit));
+        expect(calcChainDamageLimit(100, 0,1,0)).toBe(Math.min(1, LIMIT.chainDamageLimit));
+        expect(calcChainDamageLimit(0, 100,1,0)).toBe(Math.min(1, LIMIT.chainDamageLimit));
+        expect(calcChainDamageLimit(0, 1,100,0)).toBe(Math.min(1, LIMIT.chainDamageLimit));
+    });
+
+    test('Limit Test', () => {
+        expect(calcChainDamageLimit(9999, 9999,9999,0)).toBe(LIMIT.chainDamageLimit);
+    });
+
+    test('Zenith Test', () => {
+        expect(calcChainDamageLimit(0, 1,0,1234)).toBe(1234);
+    });
+});
+
+describe('#calcRawDamage', () => {
+    test('Zeroes', () => {
+        expect(calcRawDamage(0, 5, 1, 1)).toBe(0);
+        expect(calcRawDamage(10, 5, 0, 1)).toBe(0);
+        expect(calcRawDamage(10, 5, 1, 0)).toBe(0);
+    });
+
+    test('Ones', () => {
+        expect(calcRawDamage(1, 1, 1, 1)).toBe(1);
+    });
+});
+
+describe('#calcOugiDamage ', () => {
+    test('Bonus plain damage', () => {
+        expect(calcOugiDamage(0,0,1,0,0)).toBe(0);
+        expect(calcOugiDamage(0,0,1,0,1000)).toBe(1000);
+    });
+});
+
+describe('#calcRawOugiDamage', () => {
+    test('Zeroes', () => {
+        expect(calcRawOugiDamage(0,0,1,1,1,undefined,1)).toBe(2000);
+        expect(calcRawOugiDamage(0,1,1,0,1,undefined,1)).toBe(2000);
+        expect(calcRawOugiDamage(0,1,1,1,1,undefined,0)).toBe(2000);
+    });
+
+    test('Ones', () => {
+        expect(calcRawOugiDamage(0,1,1,1,1,"Djeeta",1)).toBe(3001);
+        expect(calcRawOugiDamage(0,1,1,1,1,"Orkun",1)).toBe(2001);
+    });
+});
 
 describe('#calcDefenseDebuff', () => {
     test('when enemyDefense and defenseDebuff is not set, defense is 10', () => {
