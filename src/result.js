@@ -1037,17 +1037,23 @@ const getLabelClassName = function(labelType) {
 
 module.exports.getLabelClassName = getLabelClassName;
 
+const getOugiSkillInfo = function (key, value, skillKey, label, labelType, locale) {
+    return <span key={key + "-" + skillKey}>
+            <span className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>
+        &nbsp;
+        {(value).toFixed(1)}
+        &nbsp;
+        </span>
+};
+
+module.exports.getOugiSkillInfo = getOugiSkillInfo;
+
 var Result = CreateClass({
     onClick: function (e) {
         this.props.onAddToHaisuiData(e.target.id, this.props.summonid)
     },
     getOugiSkillInfo: function (key, value, skillKey, label, labelType = "primary") {
-        return <span key={key + "-" + skillKey}>
-            <span className={getLabelClassName(labelType)}>{intl.translate(label, this.props.locale)}</span>
-            &nbsp;
-            {(value).toFixed(1)}
-            &nbsp;
-        </span>
+        return getOugiSkillInfo(key, value, skillKey, label, labelType, this.props.locale);
     },
     render: function () {
         var sw = this.props.switcher;

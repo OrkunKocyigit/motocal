@@ -1,10 +1,10 @@
 let React = require('react');
 const {
-    Result,
     appendPlusBonusToCharaName,
     createEnemyInfoString,
     createBuffInfoString,
-    getLabelClassName
+    getLabelClassName,
+    getOugiSkillInfo
 } = require('./result');
 
 const {
@@ -112,5 +112,16 @@ describe('#createBuffInfoString', () => {
 describe('#getLabelClassName', () => {
     test('valid value', () => {
         expect(getLabelClassName("Orkun")).toBe("label label-Orkun");
+    });
+});
+
+describe('#getOugiSkillInfo', () => {
+    let result = getOugiSkillInfo("Orkun", 5, "ougiRatio", "奥義倍率", "warning", "en");
+    test('valid value', () => {
+        expect(result.type).toBe("span");
+        expect(result.key).toBe("Orkun-ougiRatio");
+        expect(result.props.children[0].props.className).toBe("label label-warning");
+        expect(result.props.children[0].props.children).toBe(translate("奥義倍率", "en"));
+        expect(result.props.children[2]).toBe("5.0");
     });
 });

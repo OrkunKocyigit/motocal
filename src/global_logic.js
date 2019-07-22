@@ -3195,14 +3195,13 @@ module.exports.generateHaisuiData = function (res, arml, summon, prof, chara, st
                     var newTotalSkillCoeff = totalSkillWithoutHaisui * haisuiBuff[k].normalHaisui * haisuiBuff[k].magnaHaisui * (haisuiBuff[k].normalKonshin + haisuiBuff[k].normalSupportKonshin) * haisuiBuff[k].magnaKonshin * haisuiBuff[k].charaHaisui * haisuiBuff[k].exHaisui * haisuiBuff[k].lbHaisui * haisuiBuff[k].lbKonshin;
                     var summedAttack = onedata[key].displayAttack;
                     var newTotalAttack = summedAttack * newTotalSkillCoeff;
-                    let criticalRatio = onedata[key].criticalRatio;
-                    let newTotalExpected = newTotalAttack * criticalRatio * onedata[key].expectedAttack;
+                    var newTotalExpected = newTotalAttack * onedata[key].criticalRatio * onedata[key].expectedAttack;
 
                     let newDamage = calcAttackDamage(
                         summedAttack,
                         calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff),
                         newTotalSkillCoeff,
-                        criticalRatio,
+                        onedata[key].criticalRatio,
                         onedata[key].skilldata.enemyResistance,
                         onedata[key].skilldata.additionalDamage,
                         onedata[key].skilldata.damageUP,
@@ -3212,7 +3211,7 @@ module.exports.generateHaisuiData = function (res, arml, summon, prof, chara, st
                         summedAttack,
                         calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff),
                         newTotalSkillCoeff,
-                        criticalRatio,
+                        onedata[key].criticalRatio,
                         key,
                         onedata[key]["ougiRatio"]);
                     let newOugiDamage = module.exports.calcOugiDamage(
@@ -3317,18 +3316,18 @@ module.exports.generateHaisuiData = function (res, arml, summon, prof, chara, st
                         TotalHP[index][j + 1] = displayRealHP ? hp : parseInt(hp * onedata[key].totalHP);
                         TotalAttack[index][j + 1] = parseInt(newTotalAttack);
                         TotalExpected[index][j + 1] = parseInt(newTotalExpected);
-                        CriticalAttack[index][j + 1] = parseInt(criticalRatio * newTotalAttack);
+                        CriticalAttack[index][j + 1] = parseInt(onedata[key].criticalRatio * newTotalAttack);
                         CycleDamagePerTurn[index][j + 1] = parseInt(newExpectedCycleDamagePerTurn);
                         AverageTotalAttack[index][j + 1] += parseInt(newTotalAttack / cnt);
                         AverageTotalExpected[index][j + 1] += parseInt(newTotalExpected / cnt);
                         AverageCycleDamagePerTurn[index][j + 1] += parseInt(newExpectedCycleDamagePerTurn / cnt);
-                        AverageCriticalAttack[index][j + 1] += parseInt(criticalRatio * newTotalAttack / cnt)
+                        AverageCriticalAttack[index][j + 1] += parseInt(onedata[key].criticalRatio * newTotalAttack / cnt)
                     } else if (considerAverageArray[key]) {
                         var index = alreadyUsedHP[hp] - 1;
                         AverageTotalAttack[index][j + 1] += parseInt(newTotalAttack / cnt);
                         AverageTotalExpected[index][j + 1] += parseInt(newTotalExpected / cnt);
                         AverageCycleDamagePerTurn[index][j + 1] += parseInt(newExpectedCycleDamagePerTurn / cnt);
-                        AverageCriticalAttack[index][j + 1] += parseInt(criticalRatio * newTotalAttack / cnt)
+                        AverageCriticalAttack[index][j + 1] += parseInt(onedata[key].criticalRatio * newTotalAttack / cnt)
                     }
                 }
             }

@@ -127,6 +127,10 @@ describe('#calcAttackDamage', () => {
     test('Ones', () => {
         expect(calcAttackDamage(10, 10, 1, 1, 0,0,0,0)).toBe(1);
     });
+
+    test('Limit', () => {
+        expect(calcAttackDamage(40000, 10, 20, 1, 0,0,0,0)).toBe(80000);
+    });
 });
 
 describe('#calcChainDamageLimit', () => {
