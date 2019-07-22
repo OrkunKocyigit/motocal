@@ -168,7 +168,7 @@ module.exports.calcCombinations = function (arml, ruleMaxSize) {
     return module.exports.filterCombinations(combinations, maxSize, ruleMaxSize);
 };
 
-module.exports.getTypeBonus = function (self_elem, enemy_elem) {
+const getTypeBonus = function (self_elem, enemy_elem) {
     var t_enemy_elem = enemy_elem != undefined ? enemy_elem : "fire";
     var t_elem = self_elem != undefined ? self_elem : "fire";
 
@@ -179,20 +179,24 @@ module.exports.getTypeBonus = function (self_elem, enemy_elem) {
         return 1.5
     }
     return 1.0
-},
+};
 
-    module.exports.getTypeBonusStr = function (self_elem, enemy_elem) {
-        switch (module.exports.getTypeBonus(self_elem, enemy_elem)) {
-            case 1.0:
-                return "非有利";
-            case 1.5:
-                return "有利";
-            case 0.75:
-                return "不利";
-            default:
-                return "非有利"
-        }
-    };
+module.exports.getTypeBonus = getTypeBonus;
+
+const getTypeBonusStr = function (self_elem, enemy_elem) {
+    switch (module.exports.getTypeBonus(self_elem, enemy_elem)) {
+        case 1.0:
+            return "非有利";
+        case 1.5:
+            return "有利";
+        case 0.75:
+            return "不利";
+        default:
+            return "非有利"
+    }
+};
+
+module.exports.getTypeBonusStr = getTypeBonusStr;
 
 module.exports.makeSummonHeaderString = function (summon, locale) {
     var summonHeader = "";
@@ -211,12 +215,15 @@ module.exports.makeSummonHeaderString = function (summon, locale) {
     return summonHeader;
 };
 
-module.exports.calcDefenseDebuff = function (defense, debuff) {
+
+const calcDefenseDebuff = function (defense, debuff) {
     defense = defense != undefined ? defense : 10.0;
     debuff = debuff != undefined ? debuff : 0;
 
     return Math.max(1, defense * (1 - debuff * 0.01));
 };
+
+module.exports.calcDefenseDebuff = calcDefenseDebuff;
 
 /**
  * Calculates raw damage without any limits
@@ -876,10 +883,8 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         var debuffResistanceByNormal = 0.01 * totals[key]["cosmosDebuffResistance"]; 
         var debuffResistance = 100 * (1.0 + debuffResistanceByHigo) * (1.0 + debuffResistanceByNormal) - 100;
 
-        let ougiRatio = totals[key]["ougiRatio"];
-        let rawOugiDamage = module.exports.calcRawOugiDamage(ougiDamageUP, summedAttack, enemyDef, totalSkillCoeff, criticalRatio, key, ougiRatio);
-        let ougiBonusPlainDamage = totals[key]["ougiBonusPlainDamage"];
-        let ougiDamage = module.exports.calcOugiDamage(rawOugiDamage, damageUP, enemyResistance, ougiDamageLimit, ougiBonusPlainDamage);
+        let rawOugiDamage = module.exports.calcRawOugiDamage(ougiDamageUP, summedAttack, enemyDef, totalSkillCoeff, criticalRatio, key, totals[key]["ougiRatio"]);
+        let ougiDamage = module.exports.calcOugiDamage(rawOugiDamage, damageUP, enemyResistance, ougiDamageLimit, totals[key]["ougiBonusPlainDamage"]);
         var chainBurstSupplemental = 0;
 
         //Supplemental Damage is a "static" damage that is added after damage cap/defense/etc is calculated.
@@ -1056,10 +1061,10 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
             damageWithCritical: damage,
             // Only consecutive shots
             damageWithMultiple: damageWithoutCritical * expectedAttack,
-            ougiRatio: ougiRatio,
+            ougiRatio: totals[key]["ougiRatio"],
             ougiDamage: ougiDamage,
             ougiFixedDamage: ougiFixedDamage,
-            ougiBonusPlainDamage: ougiBonusPlainDamage,
+            ougiBonusPlainDamage: totals[key]["ougiBonusPlainDamage"],
             chainBurst: chainBurst,
             expectedTurn: expectedTurn,
             expectedCycleDamagePerTurn: expectedCycleDamagePerTurn,
@@ -3136,31 +3141,43 @@ module.exports.generateHaisuiData = function (res, arml, summon, prof, chara, st
                     var summedAttack = onedata[key].displayAttack;
                     var newTotalAttack = summedAttack * newTotalSkillCoeff;
                     let criticalRatio = onedata[key].criticalRatio;
-                    var newTotalExpected = newTotalAttack * criticalRatio * onedata[key].expectedAttack;
+                    let newTotalExpected = newTotalAttack * criticalRatio * onedata[key].expectedAttack;
 
-                    let damageUP = onedata[key].skilldata.damageUP;
-                    let enemyResistance = onedata[key].skilldata.enemyResistance;
-                    let additionalDamage = onedata[key].skilldata.additionalDamage;
-                    let damageLimit = onedata[key].skilldata.damageLimit;
-                    let enemyDef = module.exports.calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff);
-                    let rawDamage = module.exports.calcRawDamage(summedAttack, enemyDef, newTotalSkillCoeff, criticalRatio);
-                    let newDamage = module.exports.calcDamage(rawDamage, enemyResistance, additionalDamage, damageUP, damageLimit);
-
-                    let ougiDamageUP = onedata[key].skilldata.ougiDamageUP;
-                    let ougiRatio = onedata[key]["ougiRatio"];
-                    let rawOugiDamage = module.exports.calcRawOugiDamage(ougiDamageUP, summedAttack, enemyDef, newTotalSkillCoeff, criticalRatio, key, ougiRatio);
-                    let ougiDamageLimit = onedata[key].skilldata.ougiDamageLimit;
-                    let ougiBonusPlainDamage = onedata[key].ougiBonusPlainDamage;
-                    let newOugiDamage = module.exports.calcOugiDamage(rawOugiDamage, damageUP, enemyResistance, ougiDamageLimit, ougiBonusPlainDamage);
+                    let newDamage = calcAttackDamage(
+                        summedAttack,
+                        calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff),
+                        newTotalSkillCoeff,
+                        criticalRatio,
+                        onedata[key].skilldata.enemyResistance,
+                        onedata[key].skilldata.additionalDamage,
+                        onedata[key].skilldata.damageUP,
+                        onedata[key].skilldata.damageLimit);
+                    let rawOugiDamage = module.exports.calcRawOugiDamage(
+                        onedata[key].skilldata.ougiDamageUP,
+                        summedAttack,
+                        calcDefenseDebuff(prof.enemyDefense, prof.defenseDebuff),
+                        newTotalSkillCoeff,
+                        criticalRatio,
+                        key,
+                        onedata[key]["ougiRatio"]);
+                    let newOugiDamage = module.exports.calcOugiDamage(
+                        rawOugiDamage,
+                        onedata[key].skilldata.damageUP,
+                        onedata[key].skilldata.enemyResistance,
+                        onedata[key].skilldata.ougiDamageLimit,
+                        onedata[key].ougiBonusPlainDamage);
                     var chainBurstSupplemental = 0;
                     var newDamageWithoutCritical = 0; //just a placeholder. not to be used in any calculation.
                     [newDamage, newDamageWithoutCritical, newOugiDamage, chainBurstSupplemental] = supplemental.calcOthersDamage(onedata[key].skilldata.supplementalDamageArray, [newDamage, newDamageWithoutCritical, newOugiDamage, chainBurstSupplemental], {remainHP: k/100});
 
                     var chainNumber = !isNaN(prof.chainNumber) ? parseInt(prof.chainNumber) : 1;
-                    let typeBonus = module.exports.getTypeBonus(onedata[key].element, prof.enemyElement);
-                    let chainDamageUP = onedata[key].skilldata.chainDamageUP;
-                    let chainDamageLimitUP = onedata[key].skilldata.chainDamageLimit;
-                    let chainBurstDamage = module.exports.calcChainBurst(chainNumber * newOugiDamage, chainNumber, typeBonus, enemyResistance, chainDamageUP, chainDamageLimitUP);
+                    let chainBurstDamage = module.exports.calcChainBurst(
+                        chainNumber * newOugiDamage,
+                        chainNumber,
+                        getTypeBonus(onedata[key].element, prof.enemyElement),
+                        onedata[key].skilldata.enemyResistance,
+                        onedata[key].skilldata.chainDamageUP,
+                        onedata[key].skilldata.chainDamageLimit);
                     let newChainBurst = chainBurstSupplemental + chainBurstDamage / chainNumber;
 
                     var newExpectedCycleDamagePerTurn = (onedata[key].expectedTurn === Infinity)
