@@ -1,5 +1,5 @@
 const {
-    getTypeBonus,
+    getTypeBonusStr,
     calcDefenseDebuff,
     calcLBHaisuiValue,
     isDarkOpus,
@@ -21,9 +21,38 @@ const {
 
 jest.mock("./services/getLanguageData");
 
-describe('#getTypeBonus', () => {
-    test('when self element and enemy element is not set, type bonus is 1', () => {
-        expect(getTypeBonus(undefined, undefined)).toBe(1)
+describe('#getTypeBonusStr', () => {
+    test('Undefined Element', () => {
+        expect(getTypeBonusStr(undefined, undefined)).toBe("非有利");
+        expect(getTypeBonusStr(undefined, "light")).toBe("非有利");
+        expect(getTypeBonusStr(undefined, "water")).toBe("不利");
+        expect(getTypeBonusStr(undefined, "wind")).toBe("有利");
+        expect(getTypeBonusStr("light", undefined)).toBe("非有利");
+        expect(getTypeBonusStr("wind", undefined)).toBe("不利");
+        expect(getTypeBonusStr("water", undefined)).toBe("有利");
+    });
+
+    test('Strong Element', () => {
+        expect(getTypeBonusStr("fire", "wind")).toBe("有利");
+        expect(getTypeBonusStr("water", "fire")).toBe("有利");
+        expect(getTypeBonusStr("light", "dark")).toBe("有利");
+        expect(getTypeBonusStr("dark", "light")).toBe("有利");
+        expect(getTypeBonusStr("wind", "earth")).toBe("有利");
+        expect(getTypeBonusStr("earth", "water")).toBe("有利");
+    });
+
+    test('Weak Element', () => {
+        expect(getTypeBonusStr("fire", "water")).toBe("不利");
+        expect(getTypeBonusStr("water", "earth")).toBe("不利");
+        expect(getTypeBonusStr("wind", "fire")).toBe("不利");
+        expect(getTypeBonusStr("earth", "wind")).toBe("不利");
+    });
+
+    test('Natural Element', () => {
+        expect(getTypeBonusStr("fire", "fire")).toBe("非有利");
+        expect(getTypeBonusStr("fire", "earth")).toBe("非有利");
+        expect(getTypeBonusStr("fire", "light")).toBe("非有利");
+        expect(getTypeBonusStr("fire", "dark")).toBe("非有利");
     });
 });
 
