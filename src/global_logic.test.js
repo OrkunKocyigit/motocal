@@ -1,4 +1,5 @@
 const {
+    getTypeBonus,
     getTypeBonusStr,
     calcDefenseDebuff,
     calcLBHaisuiValue,
@@ -13,7 +14,8 @@ const {
     calcDamageWithoutCritical,
     calcAttackDamage,
     calcDamageLimitAmount,
-    calcChainDamageUp
+    calcChainDamageUp,
+    __RewireAPI__
 } = require('./global_logic.js');
 const {
     LIMIT
@@ -53,6 +55,14 @@ describe('#getTypeBonusStr', () => {
         expect(getTypeBonusStr("fire", "earth")).toBe("非有利");
         expect(getTypeBonusStr("fire", "light")).toBe("非有利");
         expect(getTypeBonusStr("fire", "dark")).toBe("非有利");
+    });
+
+    test('Non Default Value', () => {
+        __RewireAPI__.__Rewire__('getTypeBonus', function () {
+            return 1.3;
+        });
+        expect(getTypeBonusStr("fire", "fire")).toBe("非有利");
+        __rewire_reset_all__;
     });
 });
 
