@@ -537,6 +537,24 @@ const calcDamageLimitAmount = function(buffDamageLimit, damageLimitBuff, normalD
 
 module.exports.calcDamageLimitAmount = calcDamageLimitAmount;
 
+/**
+ *
+ * @param chainDamage
+ * @param normalChainDamage
+ * @param normalSummonAmount
+ * @param chainDamageUPLimit
+ * @param zenithChainDamage
+ * @returns {number}
+ */
+const calcChainDamageUp = function (chainDamage, normalChainDamage, normalSummonAmount, chainDamageUPLimit, zenithChainDamage) {
+    let chainDamageUP = 0.01 * (chainDamage + (normalChainDamage * normalSummonAmount));
+    chainDamageUP = Math.max(Math.min(chainDamageUPLimit, chainDamageUP), 0.0);
+    chainDamageUP += zenithChainDamage;
+    return chainDamageUP;
+};
+
+module.exports.calcChainDamageUp = calcChainDamageUp;
+
 module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
     var res = {};
 
@@ -840,17 +858,14 @@ module.exports.calcBasedOneSummon = function (summonind, prof, buff, totals) {
         if (key == "Djeeta") {
             ougiDamageExceptSkill += buff["zenithOugiDamage"];
         }
-        
+
         var ougiDamageUP = (1.0 + ougiDamageSkill) * (1.0 + ougiDamageExceptSkill) - 1.0;
-        
+
         // NOT plain additional damage such as Yodarha (SRR)
         var ougiFixedDamage = calcOugiFixedDamage(key);
 
-        var chainDamageUP = 0.01 * (totals[key]["chainDamage"] + (totals[key]["normalChainDamage"] * totalSummon["zeus"]));
-        chainDamageUP = Math.min(LIMIT.chainDamageUP, chainDamageUP);
+        let chainDamageUP = calcChainDamageUp(totals[key]["chainDamage"], totals[key]["normalChainDamage"], totalSummon["zeus"], buff["zenithChainDamage"], LIMIT.chainDamageUP);
 
-        chainDamageUP += buff["zenithChainDamage"];
-        
         if (key == "Djeeta") {
             damageLimit += buff["masterDamageLimit"] + buff["zenithDamageLimit"];
             ougiDamageLimit += buff["masterDamageLimit"] + buff["zenithDamageLimit"];

@@ -12,7 +12,8 @@ const {
     calcChainDamageLimit,
     calcDamageWithoutCritical,
     calcAttackDamage,
-    calcDamageLimitAmount
+    calcDamageLimitAmount,
+    calcChainDamageUp
 } = require('./global_logic.js');
 const {
     LIMIT
@@ -44,6 +45,25 @@ describe('#calcDamageLimitAmount', () => {
 
     test('Negative', () => {
         expect(calcDamageLimitAmount(-10, 0, 0, 0, true)).toBe(0);
+    });
+});
+
+describe('#calcChainDamageUp', () => {
+    test('Zeroes', () => {
+        expect(calcChainDamageUp(0, 0, 0, 1, 0)).toBe(0);
+        expect(calcChainDamageUp(0, 1, 0, 1, 0)).toBe(0);
+        expect(calcChainDamageUp(0, 0, 1, 1, 0)).toBe(0);
+        expect(calcChainDamageUp(1, 1, 1, 0, 0)).toBe(0);
+    });
+
+    test('Ones', () => {
+        expect(calcChainDamageUp(1, 0, 0, 1, 0)).toBe(0.01);
+        expect(calcChainDamageUp(0, 1, 1, 1, 0)).toBe(0.01);
+        expect(calcChainDamageUp(0, 0, 0, 0, 1)).toBe(1);
+    });
+
+    test('Negative', () => {
+        expect(calcChainDamageUp(-10, 0, 0, 0, 0)).toBe(0);
     });
 });
 
