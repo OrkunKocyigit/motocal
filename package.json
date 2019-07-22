@@ -33,6 +33,7 @@
   "scripts": {
     "start": "webpack-dev-server --watch --inline",
     "test": "jest",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "build": "webpack --display-error-details",
     "lint": "eslint webpack.config.js src/*",
     "lint:fix": "eslint webpack.config.js src/* --fix",

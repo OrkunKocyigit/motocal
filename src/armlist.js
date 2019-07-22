@@ -272,28 +272,32 @@ var ArmList = CreateClass({
     }
 });
 
+const getArmInitialState = function () {
+    return {
+        name: '',
+        attack: 0,
+        hp: 0,
+        armType: 'sword',
+        skill1: 'non',
+        skill2: 'non',
+        skill3: 'non',
+        slv: 1,
+        considerNumberMin: 0,
+        considerNumberMax: 1,
+        element: 'fire',
+        element2: 'fire',
+        element3: 'fire',
+        skill1Detail: 0,
+        skill2Detail: 0,
+        skill3Detail: 0,
+    };
+};
+
+module.exports.getArmInitialState = getArmInitialState;
+
 // Arm is a fundamental object corresponding one arm.
 var Arm = CreateClass({
-    getInitialState: function () {
-        return {
-            name: '',
-            attack: 0,
-            hp: 0,
-            armType: 'sword',
-            skill1: 'non',
-            skill2: 'non',
-            skill3: 'non',
-            slv: 1,
-            considerNumberMin: 0,
-            considerNumberMax: 1,
-            element: 'fire',
-            element2: 'fire',
-            element3: 'fire',
-            skill1Detail: 0,
-            skill2Detail: 0,
-            skill3Detail: 0,
-        };
-    },
+    getInitialState: getArmInitialState,
     componentWillReceiveProps: function (nextProps) {
         // only fired on Data Load
         if (nextProps.dataName != this.props.dataName) {
