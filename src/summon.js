@@ -190,8 +190,8 @@ var SummonList = CreateClass({
     }
 });
 
-var Summon = CreateClass({
-    getInitialState: function () {
+const getSummonInitialState = function() {
+    return function () {
         return {
             selfSummonType: "magna",
             selfSummonAmount: 100,
@@ -207,11 +207,17 @@ var Summon = CreateClass({
             DA: 0,
             TA: 0,
             criticalRatio: 0.0,
-            ougiDamage : 0.0,
-            tenshiDamageUP : 0.0,
-            damageLimit : 0.0
+            ougiDamage: 0.0,
+            tenshiDamageUP: 0.0,
+            damageLimit: 0.0
         };
-    },
+    };
+};
+
+module.exports.getSummonInitialState = getSummonInitialState;
+
+var Summon = CreateClass({
+    getInitialState: getSummonInitialState,
     componentDidMount: function () {
         var state = this.state;
 

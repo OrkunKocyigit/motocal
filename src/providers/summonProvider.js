@@ -1,6 +1,6 @@
 const {
-    getInitialState
-} = require("../summon").Summon;
+    getSummonInitialState
+} = require("../summon");
 
 const {
     summonTypes,
@@ -8,17 +8,9 @@ const {
 } = require("../global_const");
 
 
-const requestSummonProvider = function* (ownType, friendType, ownElement, friendElement, amount) {
-    if (amount <= 0) {
-        throw new Error("Invalid Amount");
-    } else if (!Object.keys(summonTypes).includes(ownType) || !Object.keys(summonTypes).includes(friendType)) {
-        throw new Error("Invalid type");
-    } else if (!Object.keys(summonElementTypes).includes(ownElement) || !Object.keys(summonElementTypes).includes(friendElement)) {
-        throw new Error("Invalid element");
-    }
-
+const createGenerator = function*(amount, ownType, ownElement, friendType, friendElement) {
     for (let i = 0; i < amount; i++) {
-        let summon = getInitialState();
+        let summon = getSummonInitialState();
         summon.selfSummonType = ownType;
         summon.selfElement = ownElement;
         summon.friendSummonType = friendType;
@@ -26,3 +18,17 @@ const requestSummonProvider = function* (ownType, friendType, ownElement, friend
         yield summon;
     }
 };
+
+const requestSummonProvider = function (ownType, friendType, ownElement, friendElement, amount) {
+    if (amount <= 0) {
+        throw "Invalid Amount";
+    } else if (!Object.keys(summonTypes).includes(ownType) || !Object.keys(summonTypes).includes(friendType)) {
+        throw "Invalid type";
+    } else if (!Object.keys(summonElementTypes).includes(ownElement) || !Object.keys(summonElementTypes).includes(friendElement)) {
+        throw "Invalid element";
+    }
+
+    return createGenerator(amount, ownType, ownElement, friendType, friendElement);
+};
+
+module.exports.requestSummonProvider = requestSummonProvider;
