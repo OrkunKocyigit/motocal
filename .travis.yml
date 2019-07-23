@@ -28,7 +28,7 @@ deploy:
       branch: master
   - provider: pages
     skip_cleanup: true
-    repo: motocal-dev
+    repo: OrkunKocyigit/motocal-dev
     github_token: $GITHUB_DEV_TOKEN
     local_dir: dist
     on:
