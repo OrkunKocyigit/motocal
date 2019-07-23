@@ -17,7 +17,7 @@ before_install:
   - "npm update -g npm"
   - "npm ci"
   - "export BRANCH=$(if [ '$TRAVIS_PULL_REQUEST' == 'false' ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)"
-  - "if [ '$TRAVIS_BRANCH' != 'master' ]; then npm run download:arm -- -s game -w 30 -y && npm run download:chara -- -s game -w 30 -y; fi"
+  - "if [ '$BRANCH' != 'master' ]; then npm run download:arm -- -s game -w 30 -y && npm run download:chara -- -s game -w 30 -y; fi"
 script:
   - npm test
   - sonar-scanner
@@ -36,4 +36,4 @@ deploy:
     local_dir: dist
     on:
       all_branches: true
-      condition: $TRAVIS_BRANCH != master
+      condition: $BRANCH != master

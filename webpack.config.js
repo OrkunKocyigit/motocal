@@ -50,9 +50,9 @@ const plugins = [
   }),
   CopyWebpackPlugin([
     { from: path.join(__dirname, "/*Data.json"), to: path.join(__dirname, "/dist/") },
-    { from: path.join(__dirname, "/imgs/"), to: path.join(__dirname, "/dist/imgs/"), ignore: [ '*.txt' ]},
+    { from: path.join(__dirname, "/imgs/"), to: path.join(__dirname, "/dist/imgs/"), ignore: [ '*.txt', '.gitignore' ]},
     { from: path.join(__dirname, "/otherImages/"), to: path.join(__dirname, "/dist/otherImages/") },
-    { from: path.join(__dirname, "/charaimgs/"), to: path.join(__dirname, "/dist/charaimgs/"), ignore: [ '*.txt' ]},
+    { from: path.join(__dirname, "/charaimgs/"), to: path.join(__dirname, "/dist/charaimgs/"), ignore: [ '*.txt', '.gitignore' ]},
   ]),
   // new webpack.optimize.UglifyJsPlugin({
   //   compress: {
