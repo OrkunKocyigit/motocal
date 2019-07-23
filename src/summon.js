@@ -190,28 +190,32 @@ var SummonList = CreateClass({
     }
 });
 
+const getSummonInitialState = function () {
+    return {
+        selfSummonType: "magna",
+        selfSummonAmount: 100,
+        selfSummonAmount2: 0,
+        selfElement: "fire",
+        friendSummonType: "element",
+        friendSummonAmount: 140,
+        friendSummonAmount2: 0,
+        friendElement: "fire",
+        attack: 9500,
+        hp: 4000,
+        hpBonus: 0,
+        DA: 0,
+        TA: 0,
+        criticalRatio: 0.0,
+        ougiDamage: 0.0,
+        tenshiDamageUP: 0.0,
+        damageLimit: 0.0
+    };
+};
+
+module.exports.getSummonInitialState = getSummonInitialState;
+
 var Summon = CreateClass({
-    getInitialState: function () {
-        return {
-            selfSummonType: "magna",
-            selfSummonAmount: 100,
-            selfSummonAmount2: 0,
-            selfElement: "fire",
-            friendSummonType: "element",
-            friendSummonAmount: 140,
-            friendSummonAmount2: 0,
-            friendElement: "fire",
-            attack: 9500,
-            hp: 4000,
-            hpBonus: 0,
-            DA: 0,
-            TA: 0,
-            criticalRatio: 0.0,
-            ougiDamage : 0.0,
-            tenshiDamageUP : 0.0,
-            damageLimit : 0.0
-        };
-    },
+    getInitialState: getSummonInitialState,
     componentDidMount: function () {
         var state = this.state;
 

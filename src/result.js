@@ -41,6 +41,83 @@ var {
     getInitialTotals, getTypeBonus, getTypeBonusStr, calcCriticalDeviation
 } = require('./global_logic.js');
 
+
+/**
+ * Adds plus bonus to char name if it exists
+ * @param {string}name char name
+ * @param {number}plusBonus plus bonus value
+ * @param {string}_buffer internal value to hold result
+ * @returns {string} composite string
+ */
+const appendPlusBonusToCharaName = function(name, plusBonus, _buffer=" HP") {
+    if (plusBonus > 0) {
+        _buffer = _buffer.replace(/^/, `+${plusBonus}`);
+    }
+    return _buffer.replace(/^/, name);
+};
+
+module.exports.appendPlusBonusToCharaName = appendPlusBonusToCharaName;
+
+/**
+ * Adds percentage to end of the string
+ * @param value value to be add
+ * @returns {string}new string
+ */
+const addPercent = function(value) {
+    return `${value === undefined ? "0" : value}%`
+};
+
+module.exports.addPercent = addPercent;
+
+const enemyInfoStringItems = GlobalConst.enemyInfoStringItems;
+
+const buffInfoStringItems = GlobalConst.buffInfoStringItems;
+
+/**
+ * Returns value for Info Item
+ * @param {boolean}hasPercentage has percentage sign %
+ * @param {*}propValue value
+ * @param {string}locale
+ * @param {string}_value internal value for result
+ * @returns {*}
+ */
+const getInfoStringValue = function (hasPercentage, propValue, locale, _value = "") {
+    if (hasPercentage) {
+        _value = addPercent(propValue);
+    } else {
+        if (typeof propValue === "boolean") {
+            if (propValue) {
+                _value = intl.translate("アクティブ", locale);
+            } else {
+                _value = intl.translate("無効", locale);
+            }
+        } else {
+            _value = propValue;
+        }
+    }
+    return _value;
+};
+
+const createInfoString = function (infoStringItems, locale, prof, _buffer = []) {
+    for (let infoStringItem of infoStringItems) {
+        let value = getInfoStringValue(infoStringItem[2], prof[infoStringItem[1]], locale);
+        _buffer.push(`${intl.translate(infoStringItem[0], locale)} ${value}`);
+    }
+    return _buffer.join(", ");
+};
+
+const createEnemyInfoString = function (locale, prof) {
+    return createInfoString(enemyInfoStringItems, locale, prof);
+};
+
+module.exports.createEnemyInfoString = createEnemyInfoString;
+
+const createBuffInfoString = function (locale, prof) {
+    return createInfoString(buffInfoStringItems, locale, prof);
+};
+
+module.exports.createBuffInfoString = createBuffInfoString;
+
 var ResultList = CreateClass({
     calculateResult: function (newprops) {
         var prof = newprops.profile;
@@ -465,7 +542,7 @@ var ResultList = CreateClass({
         var charaInfo = [<span key={0}>{getElementColorLabel(prof.element, locale)}&nbsp;{charaInfoStr}</span>];
         for (var i = 0; i < chara.length; i++) {
             if (chara[i].name != "" && chara[i].isConsideredInAverage) {
-                charaInfoStr = chara[i].name + " HP";
+                charaInfoStr = appendPlusBonusToCharaName(chara[i].name, chara[i].plusBonus);
                 if (chara[i].remainHP != undefined) {
                     charaInfoStr += (parseInt(chara[i].remainHP) < parseInt(prof.hp)) ? chara[i].remainHP : prof.hp
                 } else {
@@ -476,22 +553,10 @@ var ResultList = CreateClass({
                     key={i + 1}>&nbsp;/&nbsp;{getElementColorLabel(chara[i].element, locale)}&nbsp;{charaInfoStr}</span>);
             }
         }
-
         // Create buff info line
-        var buffInfo = [];
-        var addPercent = (value) => intl.translate("percent", locale).replace("{}", value === undefined ? "0" : value);
-        buffInfo.push(intl.translate("通常バフ", locale) + addPercent(prof.normalBuff));
-        buffInfo.push(intl.translate("属性バフ", locale) + addPercent(prof.elementBuff));
-        buffInfo.push(intl.translate("その他バフ", locale) + addPercent(prof.otherBuff));
-        buffInfo.push(intl.translate("DAバフ", locale) + addPercent(prof.daBuff));
-        buffInfo.push(intl.translate("TAバフ", locale) + addPercent(prof.taBuff));
-        buffInfo.push(intl.translate("追加ダメージバフ", locale) + addPercent(prof.additionalDamageBuff));
-        buffInfo.push(intl.translate("敵防御固有値", locale) + (prof.enemyDefense === undefined ? "0" : prof.enemyDefense));
-        buffInfo.push(intl.translate("防御デバフ合計", locale) + addPercent(prof.defenseDebuff));
-        buffInfo.push(intl.translate("烈日の楽園", locale) + (prof.retsujitsuNoRakuen ? intl.translate("アクティブ", locale) : intl.translate("無効", locale)));
-        buffInfo.push(intl.translate("敵非有利耐性", locale) + addPercent(Math.max(0, Math.min(100, parseInt(prof.enemyResistance)))));
-        var buffInfoStr = buffInfo.join(", ");
-
+        let buffInfoStr = createBuffInfoString(locale, prof);
+        // Enemy info line
+        let enemyInfoStr = createEnemyInfoString(locale, prof);
         if (_ua.Mobile || _ua.Tablet) {
             var changeSortKey = <FormControl componentClass="select" style={{"width": "100%", padding: "0"}}
                                              value={this.props.sortKey}
@@ -647,8 +712,9 @@ var ResultList = CreateClass({
                                 <ElementColorLabel element={s.friendElement}>{friendSummonHeader}</ElementColorLabel>
                                 <hr style={{"margin": "10px 0px"}}/>
                                 <div className="charainfo">
-                                    <div>{charaInfo}</div>
-                                    <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵の属性", locale)}</div>
+                                {charaInfo}
+                                    <div>{intl.translate("パーティ全体バフ", locale)}: {buffInfoStr}</div>
+                                    <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵", locale)} ({enemyInfoStr})</div>
                                 </div>
                                 <table className="table table-bordered">
                                     <thead className="result">
@@ -681,8 +747,8 @@ var ResultList = CreateClass({
                             <Modal.Title>{intl.translate("背水渾身グラフ", locale)}</Modal.Title>
                             <div className="charainfo" style={{"float": "left"}}>
                                 {charaInfo}
-                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵の属性", locale)}</div>
-                                <span>{buffInfoStr}</span>
+                                <div>{intl.translate("パーティ全体バフ", locale)}: {buffInfoStr}</div>
+                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵", locale)} ({enemyInfoStr})</div>
                             </div>
                             <ButtonGroup block vertical>
                                 <Button bsStyle="info"
@@ -849,8 +915,8 @@ var ResultList = CreateClass({
                                 <hr style={{"margin": "10px 0px 5px 0px"}}/>
                                 <div className="charainfo" style={{"float": "left"}}>
                                     {charaInfo}
-                                    <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵の属性", locale)}</div>
-                                    <span>{buffInfoStr}</span>
+                                    <div>{intl.translate("パーティ全体バフ", locale)}: {buffInfoStr}</div>
+                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵", locale)} ({enemyInfoStr})</div>
                                 </div>
                                 <div style={{"textAlign": "right", "float": "right"}}>
                                     <span>{intl.translate("優先項目", locale)}: {changeSortKey}</span>
@@ -888,8 +954,8 @@ var ResultList = CreateClass({
                             <Modal.Title>{intl.translate("背水渾身グラフ", locale)}</Modal.Title>
                             <div className="charainfo" style={{"float": "left"}}>
                                 {charaInfo}
-                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵の属性", locale)}</div>
-                                <span>{buffInfoStr}</span>
+                                <div>{intl.translate("パーティ全体バフ", locale)}: {buffInfoStr}</div>
+                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵", locale)} ({enemyInfoStr})</div>
                             </div>
                             <div style={{"float": "right"}}>
                                 <Button bsStyle="info"
@@ -925,8 +991,8 @@ var ResultList = CreateClass({
                             <Modal.Title>{intl.translate("ダメージシミュレータ", locale)}</Modal.Title>
                             <div className="charainfo" style={{"float": "left"}}>
                                 {charaInfo}
-                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵の属性", locale)}</div>
-                                <span>{buffInfoStr}</span>
+                                <div>{intl.translate("パーティ全体バフ", locale)}: {buffInfoStr}</div>
+                                <div>{getElementColorLabel(prof.enemyElement, locale)} {intl.translate("敵", locale)} ({enemyInfoStr})</div>
                             </div>
                             <div style={{"float": "right"}}>
                                 <Button bsStyle="primary"
@@ -965,9 +1031,29 @@ var ResultList = CreateClass({
     }
 });
 
+const getLabelClassName = function(labelType) {
+    return "label label-" + labelType;
+};
+
+module.exports.getLabelClassName = getLabelClassName;
+
+const getOugiSkillInfo = function (key, value, skillKey, label, labelType, locale) {
+    return <span key={key + "-" + skillKey}>
+            <span className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>
+        &nbsp;
+        {(value).toFixed(1)}
+        &nbsp;
+        </span>
+};
+
+module.exports.getOugiSkillInfo = getOugiSkillInfo;
+
 var Result = CreateClass({
     onClick: function (e) {
         this.props.onAddToHaisuiData(e.target.id, this.props.summonid)
+    },
+    getOugiSkillInfo: function (key, value, skillKey, label, labelType = "primary") {
+        return getOugiSkillInfo(key, value, skillKey, label, labelType, this.props.locale);
     },
     render: function () {
         var sw = this.props.switcher;
@@ -975,6 +1061,7 @@ var Result = CreateClass({
         var prof = this.props.prof;
         var onClick = this.onClick;
         var locale = this.props.locale;
+        let getOugiSkillInfo = this.getOugiSkillInfo;
 
         return (
             <tbody className="result">
@@ -1223,7 +1310,7 @@ var Result = CreateClass({
                                 mainSkillInfo.push(
                                     <span key={key + "-" + skillKey}>
                                             <span
-                                                className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
+                                                className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>&nbsp;
                                         {(100.0 * (skilldata[skillKey] - 1.0)).toFixed(1)}%&nbsp;
                                         </span>
                                 );
@@ -1255,7 +1342,7 @@ var Result = CreateClass({
                             if (value != 0.0) {
                                 multipleAttackSkillInfo.push(
                                     <span key={key + "-" + skillKey}>
-                                        <span className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
+                                        <span className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>&nbsp;
                                         <span className={isOver ? "is-over" : ""}>{value.toFixed(1)}%</span>&nbsp;
                                     </span>
                                 );
@@ -1346,7 +1433,7 @@ var Result = CreateClass({
                                 otherSkillInfo.push(
                                     <span key={key + "-" + skillKey}>
                                             <span
-                                                className={"label label-" + labelType}>{intl.translate(label, locale)}</span>&nbsp;
+                                                className={getLabelClassName(labelType)}>{intl.translate(label, locale)}</span>&nbsp;
                                         {(100.0 * skilldata[skillKey]).toFixed(1)}%&nbsp;
                                         </span>
                                 );
@@ -1362,6 +1449,14 @@ var Result = CreateClass({
                         pushSkillInfoElement3("chainDamageUP", "チェインダメージアップ", "default");
                         pushSkillInfoElement3("uplift", "高揚", "default");
 
+                        var ougiInfo = [];
+                        let ougiSkills = [["ougiRatio", "奥義倍率"], ["ougiFixedDamage", "奥義固定ダメージ"], ["ougiBonusPlainDamage", "奥義追加ダメージ(無属性固定)"]];
+                        for (let skill of ougiSkills) {
+                            if (m.data[key][skill[0]] !== 0.0) {
+                                ougiInfo.push(getOugiSkillInfo(key, m.data[key][skill[0]], skill[0], skill[1], "warning"));
+                            }
+                        }
+
                         charaDetail[key].push(<div key={key + "-mainSkillInfo"}>{mainSkillInfo}</div>);
                         charaDetail[key].push(<div key={key + "-multipleAttackInfo"}>{multipleAttackSkillInfo}</div>);
                         charaDetail[key].push(<div key={key + "-criticalInfo"}
@@ -1369,6 +1464,7 @@ var Result = CreateClass({
                         charaDetail[key].push(<div key={key + "-supplementalDamageInfo"}
                                                    style={{"margin": "5px 0px"}}>{supplementalDamageInfo}</div>);
                         charaDetail[key].push(<div key={key + "-otherSkillInfo"}>{otherSkillInfo}</div>);
+                        charaDetail[key].push(<div key={key + "-ougiInfo"}>{ougiInfo}</div>);
                     }
                 }
 
