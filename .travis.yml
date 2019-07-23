@@ -15,14 +15,27 @@ before_install:
   - "npm update -g npm"
   - "npm ci"
 script:
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - echo $TRAVIS_PULL_REQUEST_BRANCH
+  - echo $TRAVIS_BRANCH
   - npm test
   - sonar-scanner
   - npm run production-build
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: true
-  local_dir: dist
-  on:
-    all_branches: true
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    keep_history: true
+    local_dir: dist
+    on:
+      branch: master
+  - provider: pages
+    skip_cleanup: true
+    repo: motocal-$TRAVIS_BRANCH
+    target_branch: gh-pages-$TRAVIS_BRANCH
+    github_token: $GITHUB_TOKEN
+    keep_history: true
+    local_dir: dist
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH != master
