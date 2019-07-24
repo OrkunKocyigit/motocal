@@ -1512,33 +1512,35 @@ function isSupportIDValid(supportID, _validID = true) {
     return _validID;
 }
 
-function hasValidSupportAbility(support) {
-    let hasValidSupportAbility = true;
-    if (typeof support === 'undefined') {
-        hasValidSupportAbility = false;
+function getSupportAbility(supportID, _support = supportAbilities[supportID]) {
+    if (typeof _support === 'undefined') {
+        console.error("unknown support ability ID:", supportID);
     }
-    return hasValidSupportAbility;
+    return _support;
+}
+
+function getSupportSkills(rootSkill, _supportSkills = []) {
+    if (rootSkill.type === "composite") {
+        for (let support of rootSkill.value) {
+            if (support) {
+                getSupportSkills(support, _supportSkills);
+            }
+        }
+    } else {
+        _supportSkills.push(supportAbilities[rootSkill.ID] || rootSkill);
+    }
+    return _supportSkills;
 }
 
 function* eachSupport(chara) {
     for (let key of ["support", "support2", "support3"]) {
         let supportID = chara[key];
-
         if (isSupportIDValid(supportID)) {
-            let support = supportAbilities[supportID];
-            if (hasValidSupportAbility(support)) {
-                // process composite support
-                if (support.type === 'composite') {
-                    for (let subSupport of support.value) {
-                        if (subSupport && subSupport !== "non") {
-                            yield supportAbilities[subSupport.ID] || subSupport;
-                        }
-                    }
-                } else {
-                    yield support;
+            let support = getSupportAbility(supportID);
+            if (support) {
+                for (let subSupport of getSupportSkills(support)) {
+                    yield subSupport;
                 }
-            } else {
-                console.error("unknown support ability ID:", supportID);
             }
         }
     }
