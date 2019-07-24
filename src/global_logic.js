@@ -2841,209 +2841,216 @@ module.exports.calcOneCombination = function (comb, summon, prof, arml, totals, 
     return result
 };
 
+function processNormalSupportAbility(support, totals, key, buff) {
+    let range_filter = range[(support.range)] || support.range;
+
+    for (let [, chara] of range_filter(totals, key)) {
+        if (support.when && !support.when(chara, buff))
+            continue;
+        switch (support.assign || "add") {
+            case "push":
+                chara[support.type].push(support.value);
+                break;
+            case "max":
+                chara[support.type] = Math.max(support.value, chara[support.type]);
+                break;
+            case "add":
+                chara[support.type] += support.value;
+                break;
+        }
+    }
+}
+
+const hasSpecialSupportAbility = function(type) {
+    return Object.values().map(item => item.type).includes(type);
+};
+
 // Overwrite the content of totals with what reflects charap's support
 const treatSupportAbility = function (totals, chara, buff) {
-    for (var key in totals) {
+    for (let key in totals) {
         for (let support of eachSupport(totals[key])) {
             // Processing of special supporter abilities
-            switch (support.type) {
-                case "normalBuff_doraf":
-                    if (totals[key].isConsideredInAverage) {
-                        for (var key2 in totals) {
-                            // Draph, Unknown and Primal characters only (Fortified Vigor)
-                            if (totals[key2]["race"] === "doraf" ||
-                                totals[key2]["race"] === "unknown" ||
-                                totals[key2]["race"] === "seisho") {
-                                totals[key2]["normalBuff"] += support.value
+            if (hasSpecialSupportAbility(support.type)) {
+                switch (support.type) {
+                    case "normalBuff_doraf":
+                        if (totals[key].isConsideredInAverage) {
+                            for (var key2 in totals) {
+                                // Draph, Unknown and Primal characters only (Fortified Vigor)
+                                if (totals[key2]["race"] === "doraf" ||
+                                    totals[key2]["race"] === "unknown" ||
+                                    totals[key2]["race"] === "seisho") {
+                                    totals[key2]["normalBuff"] += support.value
+                                }
                             }
+                        } else {
+                            // Calculate yourself only if you do not put it in the average
+                            totals[key]["normalBuff"] += support.value
                         }
-                    } else {
-                        // Calculate yourself only if you do not put it in the average
-                        totals[key]["normalBuff"] += support.value
-                    }
-                    continue;
-                case "normalBuff_depends_races":
-                    var races = Math.min(3, module.exports.checkNumberOfRaces(chara));
-                    totals[key]["otherBuff"] = (1.0 + totals[key]["otherBuff"]) * (1.0 + races * 0.10) - 1.0;
-                    continue;
-                case "normalBuff_depends_member":
-                    continue;
-                case "DATASupport":
-                    let [daRate, taRate] = support.value;
-                    if (totals[key].isConsideredInAverage) {
-                        for (let key2 in totals) {
-                            if (totals[key2]["element"] === support.range
-                              || support.range === "all"
-                              || (support.range === "own" && key === key2)) {
-                                totals[key2]["DASupport"] += daRate;
-                                totals[key2]["TASupport"] += taRate;
+                        continue;
+                    case "normalBuff_depends_races":
+                        var races = Math.min(3, module.exports.checkNumberOfRaces(chara));
+                        totals[key]["otherBuff"] = (1.0 + totals[key]["otherBuff"]) * (1.0 + races * 0.10) - 1.0;
+                        continue;
+                    case "normalBuff_depends_member":
+                        continue;
+                    case "DATASupport":
+                        let [daRate, taRate] = support.value;
+                        if (totals[key].isConsideredInAverage) {
+                            for (let key2 in totals) {
+                                if (totals[key2]["element"] === support.range
+                                    || support.range === "all"
+                                    || (support.range === "own" && key === key2)) {
+                                    totals[key2]["DASupport"] += daRate;
+                                    totals[key2]["TASupport"] += taRate;
+                                }
                             }
+                        } else {
+                            // Calculate yourself only if you do not put it in the average
+                            totals[key]["DASupport"] += daRate;
+                            totals[key]["TASupport"] += taRate;
                         }
-                    } else {
-                        // Calculate yourself only if you do not put it in the average
-                        totals[key]["DASupport"] += daRate;
-                        totals[key]["TASupport"] += taRate;
-                    }
-                    continue;
-                case "daBuff_fist":
-                    if (totals[key].isConsideredInAverage) {
-                        for (var key2 in totals) {
-                            if (totals[key2]["fav1"] === "fist" || totals[key2]["fav2"] === "fist") {
-                                totals[key2]["DASupport"] += support.value;
+                        continue;
+                    case "daBuff_fist":
+                        if (totals[key].isConsideredInAverage) {
+                            for (var key2 in totals) {
+                                if (totals[key2]["fav1"] === "fist" || totals[key2]["fav2"] === "fist") {
+                                    totals[key2]["DASupport"] += support.value;
+                                }
                             }
+                        } else {
+                            // Calculate yourself only if you do not put it in the average
+                            totals[key]["DASupport"] += support.value;
                         }
-                    } else {
-                        // Calculate yourself only if you do not put it in the average
-                        totals[key]["DASupport"] += support.value;
-                    }
-                    continue;
-                case "shinryu_to_no_kizuna":
-                    if (when.element_buff(chara, buff)) {
-                        totals[key]["normalBuff"] += support.value;
-                    }
-                    continue;
-                case "element_buff_boost":
-                    for (let [, chara] of support.range(totals, key)) {
+                        continue;
+                    case "shinryu_to_no_kizuna":
                         if (when.element_buff(chara, buff)) {
-                            chara["elementBuffBoostBuff"] = Math.max(support.value, chara["elementBuffBoostBuff"]);
+                            totals[key]["normalBuff"] += support.value;
                         }
-                    }
-                    continue;
-                case "eternal_wisdom":
-                    if (totals[key]["elementBuff"] > 0 || buff["element"] > 0) {
-                        totals[key]["normalBuff"] += 0.30;
-                        totals[key]["DASupport"] += 0.35;
-                        totals[key]["TASupport"] += 0.10;
-                    }
-                    continue;
-                case "emnity_all_SL10":
-                    // Refer to HP of Zahlhamelina
-                    var charaHaisuiValue = module.exports.calcHaisuiValue("charaHaisui", "L", 10, totals[key]["remainHP"]);
-                    if (totals[key].isConsideredInAverage) {
-                        for (var key2 in totals) {
-                            totals[key2]["charaHaisui"] += charaHaisuiValue
+                        continue;
+                    case "element_buff_boost":
+                        for (let [, chara] of support.range(totals, key)) {
+                            if (when.element_buff(chara, buff)) {
+                                chara["elementBuffBoostBuff"] = Math.max(support.value, chara["elementBuffBoostBuff"]);
+                            }
                         }
-                    } else {
-                        totals[key]["charaHaisui"] += charaHaisuiValue
-                    }
-                    continue;
-                case "emnity_own_SL20":
-                    totals[key]["charaHaisui"] += module.exports.calcHaisuiValue("charaHaisui", "L", 27.5, totals[key]["remainHP"]);
-                    continue;
-                case "envoy_meditation":
-                    var elements = Math.min(4, module.exports.checkNumberOfElements(totals));
-                    // number of elements * attack 15% DA 10% TA 3%
-                    totals[key]["normalBuff"] += elements * 0.15;
-                    totals[key]["DASupport"] += elements * 0.10;
-                    totals[key]["TASupport"] += elements * 0.03;
-                    continue;
-                case "ideal_vassals":
-                    var countBattleMembers = Math.min(4, Object.values(totals).filter((x) => x.name != "" && x.isConsideredInAverage).length);
-                    switch (countBattleMembers) {
-                        case 1:
-                            break;
-                        case 2:
-                            totals[key]["normalBuff"] += 0.05;
-                            break;
-                        case 3:
-                            totals[key]["normalBuff"] += 0.10;
-                            totals[key]["DASupport"] += 0.03;
-                            break;
-                        case 4:
-                            totals[key]["normalBuff"] += 0.15;
-                            totals[key]["DASupport"] += 0.10;
-                            totals[key]["TASupport"] += 0.06;
-                            break;
-                        default:
-                            break;
-                    }
-                    continue;
-                case "dance_of_nataraja":
-                    totals[key]["ougiGageBuff"] -= 0.35;
-                    totals[key]["charaUniqueDamageUP"] += 0.15;
-                    continue;
-                case "recklessness_incarnate":
-                    totals[key]["ougiGageBuff"] -= 0.35;
-                    totals[key]["charaUniqueDamageUP"] += 0.15;
-                    totals[key]["HPBuff"] += 0.20;
-                    continue;
-                case "knightmare_frame":
-                    totals[key]["HPBuff"] += 0.15;
-                    totals[key]["ougiGageBuff"] -= 0.25;
-                    continue;
-                case "charaDamageUP_OugiCap":
-                    totals[key]["charaDamageUP"] += support.value;
-                    totals[key]["ougiDamageLimitBuff"] += support.value;
-                    continue;
-                case "ougiDamageBuff_capBuff":
-                    if (totals[key].isConsideredInAverage) {
-                        for (var key2 in totals) {
-                            totals[key2]["ougiDamageBuff"] += support.value;
-                            totals[key2]["ougiDamageLimitBuff"] += 0.10;
+                        continue;
+                    case "eternal_wisdom":
+                        if (totals[key]["elementBuff"] > 0 || buff["element"] > 0) {
+                            totals[key]["normalBuff"] += 0.30;
+                            totals[key]["DASupport"] += 0.35;
+                            totals[key]["TASupport"] += 0.10;
                         }
-                    } else {
-                        // Calculate yourself only if you do not put it in the average
-                        totals[key]["ougiDamageBuff"] += support.value;
-                        totals[key]["ougiDamageLimitBuff"] += 0.10;
-                    }
-                    continue;
-                case "additionalDamageXA":
-                    // currently, range: own only, and no chances to stack.
-                    totals[key]["additionalDamageXA"] = support.value;
-                    continue;
-                case "element_buff_boost_damageUP_own_10":
-                    if (when.element_buff(totals[key], buff)) {
+                        continue;
+                    case "emnity_all_SL10":
+                        // Refer to HP of Zahlhamelina
+                        var charaHaisuiValue = module.exports.calcHaisuiValue("charaHaisui", "L", 10, totals[key]["remainHP"]);
+                        if (totals[key].isConsideredInAverage) {
+                            for (var key2 in totals) {
+                                totals[key2]["charaHaisui"] += charaHaisuiValue
+                            }
+                        } else {
+                            totals[key]["charaHaisui"] += charaHaisuiValue
+                        }
+                        continue;
+                    case "emnity_own_SL20":
+                        totals[key]["charaHaisui"] += module.exports.calcHaisuiValue("charaHaisui", "L", 27.5, totals[key]["remainHP"]);
+                        continue;
+                    case "envoy_meditation":
+                        var elements = Math.min(4, module.exports.checkNumberOfElements(totals));
+                        // number of elements * attack 15% DA 10% TA 3%
+                        totals[key]["normalBuff"] += elements * 0.15;
+                        totals[key]["DASupport"] += elements * 0.10;
+                        totals[key]["TASupport"] += elements * 0.03;
+                        continue;
+                    case "ideal_vassals":
+                        var countBattleMembers = Math.min(4, Object.values(totals).filter((x) => x.name != "" && x.isConsideredInAverage).length);
+                        switch (countBattleMembers) {
+                            case 1:
+                                break;
+                            case 2:
+                                totals[key]["normalBuff"] += 0.05;
+                                break;
+                            case 3:
+                                totals[key]["normalBuff"] += 0.10;
+                                totals[key]["DASupport"] += 0.03;
+                                break;
+                            case 4:
+                                totals[key]["normalBuff"] += 0.15;
+                                totals[key]["DASupport"] += 0.10;
+                                totals[key]["TASupport"] += 0.06;
+                                break;
+                            default:
+                                break;
+                        }
+                        continue;
+                    case "dance_of_nataraja":
+                        totals[key]["ougiGageBuff"] -= 0.35;
+                        totals[key]["charaUniqueDamageUP"] += 0.15;
+                        continue;
+                    case "recklessness_incarnate":
+                        totals[key]["ougiGageBuff"] -= 0.35;
+                        totals[key]["charaUniqueDamageUP"] += 0.15;
+                        totals[key]["HPBuff"] += 0.20;
+                        continue;
+                    case "knightmare_frame":
+                        totals[key]["HPBuff"] += 0.15;
+                        totals[key]["ougiGageBuff"] -= 0.25;
+                        continue;
+                    case "charaDamageUP_OugiCap":
                         totals[key]["charaDamageUP"] += support.value;
-                    }
-                    continue;
-                case "critical_cap_up":
-                    for (let [, chara] of support.range(totals, key)) {
-                        chara["criticalDamageLimit"] += support.value;
-                    }
-                    continue;
-                case "no_normal_attack":
-                    continue;
-                case "normalSupportKonshin_hpDebuff":
-                    totals[key]["HPdebuff"] += support.hpDebuff;
-                    // falls through
-                case "normalSupportKonshin":
-                    let supportKonshinValue = module.exports.calcHaisuiValue("normalSupportKonshin", support.value, 1, totals[key]["remainHP"]);
-                    if (totals[key].isConsideredInAverage) {
-                        for (let key2 in totals) {
-                            totals[key2]["normalSupportKonshin"] = Math.max(totals[key2]["normalSupportKonshin"], supportKonshinValue);
+                        totals[key]["ougiDamageLimitBuff"] += support.value;
+                        continue;
+                    case "ougiDamageBuff_capBuff":
+                        if (totals[key].isConsideredInAverage) {
+                            for (var key2 in totals) {
+                                totals[key2]["ougiDamageBuff"] += support.value;
+                                totals[key2]["ougiDamageLimitBuff"] += 0.10;
+                            }
+                        } else {
+                            // Calculate yourself only if you do not put it in the average
+                            totals[key]["ougiDamageBuff"] += support.value;
+                            totals[key]["ougiDamageLimitBuff"] += 0.10;
                         }
-                    } else {
-                        totals[key]["normalSupportKonshin"] = Math.max(totals[key]["normalSupportKonshin"], supportKonshinValue);
-                    }
-                    continue;
-                case "supplemental_third_hit":
-                    if (support.range == "own") {
-                        totals[key]["supplementalThirdHit"].push({"source": "サポアビ", value: support.value});
-                    }
-                    continue;
-                default:
-                    break;
-            }
-
-            // FIXME: restrict filtering range function lookup
-            //  currently support "all", "own", "others", "Djeeta"
-            //  not work well with, range: "element" etc .. use range function
-            let range_filter = range[support.range] || support.range;
-
-            for (let [, chara] of range_filter(totals, key)) {
-                if (support.when && !support.when(chara, buff))
-                    continue;
-                switch (support.assign || "add") {
-                case "push":
-                    chara[support.type].push(support.value);
-                    break;
-                case "max":
-                    chara[support.type] = Math.max(support.value, chara[support.type]);
-                    break;
-                case "add":
-                    chara[support.type] += support.value;
-                    break;
+                        continue;
+                    case "additionalDamageXA":
+                        // currently, range: own only, and no chances to stack.
+                        totals[key]["additionalDamageXA"] = support.value;
+                        continue;
+                    case "element_buff_boost_damageUP_own_10":
+                        if (when.element_buff(totals[key], buff)) {
+                            totals[key]["charaDamageUP"] += support.value;
+                        }
+                        continue;
+                    case "critical_cap_up":
+                        for (let [, chara] of support.range(totals, key)) {
+                            chara["criticalDamageLimit"] += support.value;
+                        }
+                        continue;
+                    case "no_normal_attack":
+                        continue;
+                    case "normalSupportKonshin_hpDebuff":
+                        totals[key]["HPdebuff"] += support.hpDebuff;
+                    // falls through
+                    case "normalSupportKonshin":
+                        let supportKonshinValue = module.exports.calcHaisuiValue("normalSupportKonshin", support.value, 1, totals[key]["remainHP"]);
+                        if (totals[key].isConsideredInAverage) {
+                            for (let key2 in totals) {
+                                totals[key2]["normalSupportKonshin"] = Math.max(totals[key2]["normalSupportKonshin"], supportKonshinValue);
+                            }
+                        } else {
+                            totals[key]["normalSupportKonshin"] = Math.max(totals[key]["normalSupportKonshin"], supportKonshinValue);
+                        }
+                        continue;
+                    case "supplemental_third_hit":
+                        if (support.range == "own") {
+                            totals[key]["supplementalThirdHit"].push({"source": "サポアビ", value: support.value});
+                        }
+                        continue;
+                    default:
+                        break;
                 }
+            } else {
+                processNormalSupportAbility(support, totals, key, buff);
             }
         }
     }
