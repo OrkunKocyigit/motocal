@@ -39,12 +39,33 @@ Object.assign(range_element, {
     dark: range_element("dark"),
 });
 
-// FIXME: This race check is now not completed.
 // e.g. baha race check will match to "unknown", "seisho"
 const range_race = (race) => range_custom(chara => chara.race === race);
 
-// TODO: Support two favorite weapons.
+Object.assign(range_race, {
+    human: range_race("human"),
+    erune: range_race("erune"),
+    doraf: range_race("doraf"),
+    havin: range_race("havin"),
+    seisho: range_race("seisho"),
+    unknown: range_race("unknown")
+});
+
 const range_fav = (fav) => range_custom(chara => [chara.fav1, chara.fav2].includes(fav));
+
+Object.assign(range_fav, {
+    dagger: range_fav("dagger"),
+    sword: range_fav("sword"),
+    spear: range_fav("spear"),
+    axe: range_fav("axe"),
+    wand: range_fav("wand"),
+    gun: range_fav("gun"),
+    fist: range_fav("fist"),
+    bow: range_fav("bow"),
+    music: range_fav("music"),
+    katana: range_fav("katana"),
+    none: range_fav("none")
+});
 
 const range_sex = (sex) => range_custom(chara => chara.sex === sex);
 

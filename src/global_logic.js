@@ -1500,38 +1500,47 @@ function* eachSkill(arm) {
     }
 }
 
+function isSupportIDValid(supportID, _validID = true) {
+    if (typeof supportID === 'undefined') {
+        _validID = false; // Data maybe broken.
+    }
+
+    if (supportID === 'none') {
+        _validID = false; // Safe for skip
+    }
+
+    return _validID;
+}
+
+function hasValidSupportAbility(support) {
+    let hasValidSupportAbility = true;
+    if (typeof support === 'undefined') {
+        hasValidSupportAbility = false;
+    }
+    return hasValidSupportAbility;
+}
+
 function* eachSupport(chara) {
     for (let key of ["support", "support2", "support3"]) {
-
         let supportID = chara[key];
 
-        if (typeof supportID === 'undefined') {
-            continue; // Data maybe broken.
-        }
-
-        if (supportID === 'none') {
-            continue; // Safe for skip
-        }
-
-        let support = supportAbilities[supportID];
-
-        if (typeof support === 'undefined') {
-            console.error("unknown support ability ID:", supportID);
-            continue;
-        }
-
-        // process composite support
-        if (support.type === 'composite') {
-            for (let subSupport of support.value) {
-                // TODO: check undefined and" "none" support
-                if (subSupport && subSupport !== "non") {
-                    yield supportAbilities[subSupport.ID] || subSupport;
+        if (isSupportIDValid(supportID)) {
+            let support = supportAbilities[supportID];
+            if (hasValidSupportAbility(support)) {
+                // process composite support
+                if (support.type === 'composite') {
+                    for (let subSupport of support.value) {
+                        if (subSupport && subSupport !== "non") {
+                            yield supportAbilities[subSupport.ID] || subSupport;
+                        }
+                    }
+                } else {
+                    yield support;
                 }
+            } else {
+                console.error("unknown support ability ID:", supportID);
             }
-            continue;
         }
-
-        yield support;
     }
 }
 
