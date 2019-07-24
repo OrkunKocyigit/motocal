@@ -1,0 +1,457 @@
+{
+  "Revion_kishi_sanshimai": {
+    "name": "3回攻撃時に追加ダメージ発生(15%)。(レヴィオン姉妹 マイム＆ミイム＆メイム)",
+    "type": "additionalDamageXA",
+    "range": "target-own",
+    "value": [
+      0,
+      0,
+      0.15
+    ]
+  },
+  "aegisUP_30": {
+    "name": "スキル「守護」と「神威」の効果による自分のHP上昇量UP。(白竜の双騎士 ランスロット＆ヴェイン)",
+    "type": "aegisUP",
+    "range": "target-own",
+    "value": 0.3
+  },
+  "atk_up_all_10": {
+    "name": "全体攻撃10%UP(アニラ)",
+    "type": "normalBuff",
+    "range": "target-all",
+    "value": 0.1
+  },
+  "atk_up_all_5": {
+    "name": "全体攻撃5%UP(クリスティーナ)",
+    "type": "normalBuff",
+    "range": "target-all",
+    "value": 0.05
+  },
+  "atk_up_depends_races": {
+    "name": "バトルメンバーの種族数に応じて攻撃力UP(リリィ)",
+    "type": "normalBuff_depends_races",
+    "range": "target-own",
+    "value": 0.1
+  },
+  "atk_up_doraf": {
+    "name": "ドラフと種族不明の攻撃UP(ナルメア)",
+    "type": "normalBuff_doraf",
+    "range": "target-all",
+    "value": 0.1
+  },
+  "atk_up_own_5": {
+    "name": "攻撃5%UP(レディグレイ)",
+    "type": "normalBuff",
+    "range": "target-own",
+    "value": 0.05
+  },
+  "chikara_atsu_no_ha": {
+    "name": "1回攻撃と2回攻撃時に火属性追加ダメージ発生(1回:80%、 2回:30%)。(スツルム)",
+    "type": "additionalDamageXA",
+    "range": "target-own",
+    "value": [
+      0.8,
+      0.3,
+      0
+    ]
+  },
+  "critical_cap_up_light_3": {
+    "name": "光属性キャラがクリティカル発動時にダメージ上限3%UP。(シルヴァ(光属性ver))",
+    "type": "critical_cap_up",
+    "range": "element-light",
+    "value": 0.03
+  },
+  "critical_cap_up_own_10": {
+    "name": "クリティカル発動時にダメージ上限10%UP。(オイゲン(リミテッドver))",
+    "type": "critical_cap_up",
+    "range": "target-own",
+    "value": 0.1
+  },
+  "critical_up_all_100_50": {
+    "name": "全体クリティカル確率UP(発動率100%, 倍率50%)(最終ソーン奥義)",
+    "type": "normalOtherCriticalBuff",
+    "assign": "push",
+    "range": "target-all",
+    "value": {
+      "value": 1,
+      "attackRatio": 0.5
+    }
+  },
+  "critical_up_all_5_30": {
+    "name": "全体クリティカル確率UP(発動率5%, 倍率30%)(フェリ)",
+    "type": "normalOtherCriticalBuff",
+    "assign": "push",
+    "range": "target-all",
+    "value": {
+      "value": 0.05,
+      "attackRatio": 0.3
+    }
+  },
+  "critical_up_own_10_30": {
+    "name": "クリティカル確率UP(発動率10%, 倍率30%)(ヴァンピィ, ジャンヌダルク)",
+    "type": "normalOtherCriticalBuff",
+    "assign": "push",
+    "range": "target-own",
+    "value": {
+      "value": 0.1,
+      "attackRatio": 0.3
+    }
+  },
+  "critical_up_own_20_20": {
+    "name": "クリティカル確率UP(発動率20%, 倍率20%)(水着ジャンヌ)",
+    "type": "normalOtherCriticalBuff",
+    "assign": "push",
+    "range": "target-own",
+    "value": {
+      "value": 0.2,
+      "attackRatio": 0.2
+    }
+  },
+  "critical_up_own_40_50": {
+    "name": "クリティカル確率UP(発動率40%, 倍率50%)(キャル)",
+    "type": "normalOtherCriticalBuff",
+    "assign": "push",
+    "range": "target-own",
+    "value": {
+      "value": 0.4,
+      "attackRatio": 0.5
+    }
+  },
+  "da_up_all_10": {
+    "name": "全体DA率10%UP(ランスロット)",
+    "type": "DASupport",
+    "range": "target-all",
+    "value": 0.1
+  },
+  "da_up_fist_10": {
+    "name": "格闘キャラDA率10%UP(ガンダゴウザ)",
+    "type": "daBuff_fist",
+    "range": "target-all",
+    "value": 0.1
+  },
+  "damageUP_10": {
+    "name": "与ダメージ上昇10%UP",
+    "type": "charaDamageUP",
+    "range": "target-own",
+    "value": 0.1
+  },
+  "damageUP_20": {
+    "name": "与ダメージ上昇20%UP(色々)",
+    "type": "charaDamageUP",
+    "range": "target-own",
+    "value": 0.2
+  },
+  "damageUP_5": {
+    "name": "与ダメージ上昇5%UP(アビー)",
+    "type": "charaDamageUP",
+    "range": "target-own",
+    "value": 0.05
+  },
+  "damageUP_OugiCapUP_20": {
+    "name": "与ダメージ上昇20%UP&奥義ダメージ上限20%UP(最終十天衆)",
+    "type": "charaDamageUP_OugiCap",
+    "range": "target-own",
+    "value": 0.2
+  },
+  "dance_of_nataraja": {
+    "name": "奥義ゲージ上昇量35%DOWN&与ダメージ上昇15%UP(シヴァ)",
+    "type": "dance_of_nataraja",
+    "range": "target-own",
+    "value": 0
+  },
+  "data_up_water_10_5": {
+    "name": "全体水DA率10%UP&TA率5%UP(水着ディアンサ)",
+    "type": "DATASupport",
+    "range": "element-water",
+    "value": [
+      0.1,
+      0.05
+    ]
+  },
+  "data_up_wind_10_5": {
+    "name": "全体風DA率10%UP&TA率5%UP(コッコロ)",
+    "type": "DATASupport",
+    "range": "element-wind",
+    "value": [
+      0.1,
+      0.05
+    ]
+  },
+  "debuff_resistance_up_own_15": {
+    "name": "弱体耐性15%UP。(レナ、カルメリーナ)",
+    "type": "debuffResistanceBuff",
+    "range": "target-own",
+    "value": 0.15
+  },
+  "debuff_resistance_up_own_80": {
+    "name": "弱体耐性80%UP。(フュンフ)",
+    "type": "debuffResistanceBuff",
+    "range": "target-own",
+    "value": 0.8
+  },
+  "element_buff_boost_all_30": {
+    "name": "味方全体の強化効果「属性攻撃UP」の効果30%UP。",
+    "type": "element_buff_boost",
+    "range": "target-all",
+    "value": 0.3
+  },
+  "element_buff_boost_damageUP_own_10": {
+    "name": "属性攻撃力UPが付与されている時、与ダメージ上昇10%UP。(オリヴィエ)",
+    "type": "element_buff_boost_damageUP_own_10",
+    "range": "target-own",
+    "value": 0.1
+  },
+  "element_buff_boost_dark_30": {
+    "name": "味方全体の強化効果「闇属性攻撃UP」の効果30%UP。",
+    "type": "element_buff_boost",
+    "range": "element-dark",
+    "value": 0.3
+  },
+  "element_buff_boost_earth_30": {
+    "name": "味方全体の強化効果「土属性攻撃UP」の効果30%UP。(ブローディア)",
+    "type": "element_buff_boost",
+    "range": "element-earth",
+    "value": 0.3
+  },
+  "element_buff_boost_fire_30": {
+    "name": "味方全体の強化効果「火属性攻撃UP」の効果30%UP。(シヴァ)",
+    "type": "element_buff_boost",
+    "range": "element-fire",
+    "value": 0.3
+  },
+  "element_buff_boost_light_30": {
+    "name": "味方全体の強化効果「光属性攻撃UP」の効果30%UP。",
+    "type": "element_buff_boost",
+    "range": "element-light",
+    "value": 0.3
+  },
+  "element_buff_boost_own_30": {
+    "name": "属性バフ付与時に属性攻撃30%UP(パーシヴァル,アグロヴァル)",
+    "type": "element_buff_boost",
+    "range": "target-own",
+    "value": 0.3
+  },
+  "element_buff_boost_water_30": {
+    "name": "味方全体の強化効果「水属性攻撃UP」の効果30%UP。(エウロペ)",
+    "type": "element_buff_boost",
+    "range": "element-water",
+    "value": 0.3
+  },
+  "element_buff_boost_wind_15": {
+    "name": "味方全体の強化効果「風属性攻撃UP」の効果15%UP。(コッコロ)",
+    "type": "element_buff_boost",
+    "range": "element-wind",
+    "value": 0.15
+  },
+  "element_buff_boost_wind_30": {
+    "name": "味方全体の強化効果「風属性攻撃UP」の効果30%UP。(グリームニル)",
+    "type": "element_buff_boost",
+    "range": "element-wind",
+    "value": 0.3
+  },
+  "emnity_all_SL10": {
+    "name": "全体背水効果(ザルハメリナ)",
+    "type": "emnity_all_SL10",
+    "range": "target-all",
+    "value": 0
+  },
+  "emnity_own_SL20": {
+    "name": "背水効果(闇ジャンヌダルク, 黒騎士)",
+    "type": "emnity_own_SL20",
+    "range": "target-own",
+    "value": 0
+  },
+  "envoy_meditation": {
+    "name": "バトルメンバーの属性の数に応じて自分のステータスUP(水着ゾーイ)",
+    "type": "envoy_meditation",
+    "range": "target-own",
+    "value": 0
+  },
+  "eternal_wisdom": {
+    "name": "属性バフ付与時にステータスUP(スカーサハ)",
+    "type": "eternal_wisdom",
+    "range": "target-own",
+    "value": 0
+  },
+  "hp_down_own_15": {
+    "name": "HP15%DOWN(水着イシュ, マルキ, ロザミア)",
+    "type": "HPBuff",
+    "range": "target-own",
+    "value": -0.15
+  },
+  "hp_up_own_10": {
+    "name": "HP10%UP(黒騎士)",
+    "type": "HPBuff",
+    "range": "target-own",
+    "value": 0.1
+  },
+  "hp_up_own_15": {
+    "name": "HP15%UP(ペコリーヌ)",
+    "type": "HPBuff",
+    "range": "target-own",
+    "value": 0.15
+  },
+  "hp_up_own_20": {
+    "name": "HP20%UP(ソリッズ, ファスティバ(SSR))",
+    "type": "HPBuff",
+    "range": "target-own",
+    "value": 0.2
+  },
+  "ideal_vassals": {
+    "name": "バトルメンバーの数が多い程自分のステータスUP(パーシヴァル)",
+    "type": "ideal_vassals",
+    "range": "target-own",
+    "value": 0
+  },
+  "knightmare_frame": {
+    "name": "HP15%UP&DEF10%UP&奥義ゲージ上昇量25%DOWN(ルルーシュ・ランペルージ, 枢木スザク, 紅月カレン)",
+    "type": "knightmare_frame",
+    "range": "target-own",
+    "value": 0
+  },
+  "mamoritai_kono_egao": {
+    "name": "自分以外の味方の攻5%UPとクリティカル確率UP(発動率20%, 倍率20%)。(ヤイア)",
+    "type": "composite",
+    "value": [
+      {
+        "ID": "mamorubeshi_sono_egao"
+      },
+      {
+        "type": "normalBuff",
+        "range": "target-others",
+        "value": 0.05
+      }
+    ]
+  },
+  "mamorubeshi_sono_egao": {
+    "name": "自分以外の味方のクリティカル確率UP(発動率20%, 倍率20%)。(ヤイア(クリスマスver))",
+    "type": "normalOtherCriticalBuff",
+    "assign": "push",
+    "range": "target-others",
+    "value": {
+      "value": 0.2,
+      "attackRatio": 0.2
+    }
+  },
+  "none": {
+    "name": "なし",
+    "type": "none",
+    "range": "target-own",
+    "value": 0
+  },
+  "ougiCapUP_100": {
+    "name": "奥義ダメージ上限100%UP(シャリオス17世)",
+    "type": "ougiDamageLimitBuff",
+    "range": "target-own",
+    "value": 1
+  },
+  "ougiCapUP_20": {
+    "name": "奥義ダメージ上限20%UP(最終十天衆)",
+    "type": "ougiDamageLimitBuff",
+    "range": "target-own",
+    "value": 0.2
+  },
+  "ougiCapUP_25": {
+    "name": "奥義ダメージ上限25%UP(ルリア,SSRロボミ)",
+    "type": "ougiDamageLimitBuff",
+    "range": "target-own",
+    "value": 0.25
+  },
+  "ougi_damage_up_50": {
+    "name": "全体奥義ダメージ50%UP(シエテ)",
+    "type": "ougiDamageBuff",
+    "range": "target-all",
+    "value": 0.5
+  },
+  "ougi_damage_up_50_cap_10": {
+    "name": "全体奥義ダメージ50%UP&奥義上限10%UP(最終シエテ)",
+    "type": "ougiDamageBuff_capBuff",
+    "range": "target-all",
+    "value": 0.5
+  },
+  "ougi_gage_down_own_35": {
+    "name": "奥義ゲージ上昇量35%DOWN。(ガイゼンボーガ)",
+    "type": "ougiGageBuff",
+    "range": "target-own",
+    "value": -0.35
+  },
+  "ougi_gage_down_own_35_ta_100": {
+    "name": "奥義ゲージ上昇量35%DOWN。(ウーフとレニー,プレデター(SR))",
+    "type": "ougiGageBuff",
+    "range": "target-own",
+    "value": -0.35
+  },
+  "ougi_gage_up_djeeta_20": {
+    "name": "主人公の奥義ゲージ上昇量20%UP。(クラリス(バレンタインver))",
+    "type": "ougiGageBuff",
+    "range": "target-Djeeta",
+    "value": 0.2
+  },
+  "ougi_gage_up_own_10": {
+    "name": "奥義ゲージ上昇量10%UP(アルタイル)",
+    "type": "ougiGageBuff",
+    "range": "target-own",
+    "value": 0.1
+  },
+  "ougi_gage_up_own_100": {
+    "name": "奥義ゲージ上昇量100%UP(オクトー)",
+    "type": "ougiGageBuff",
+    "range": "target-own",
+    "value": 1
+  },
+  "ougi_gage_up_own_20": {
+    "name": "奥義ゲージ上昇量20%UP(アレ爺,シルヴァ,アーミラ)",
+    "type": "ougiGageBuff",
+    "range": "target-own",
+    "value": 0.2
+  },
+  "recklessness_incarnate": {
+    "name": "奥義ゲージ上昇量35%DOWN&与ダメージ15%UP&HP20%UP(クビラ)",
+    "type": "recklessness_incarnate",
+    "range": "target-own",
+    "value": 0
+  },
+  "shinryu_to_no_kizuna": {
+    "name": "属性攻撃UPが付与されている時、自分の攻撃UP。(ヘルエス(風属性ver))",
+    "type": "shinryu_to_no_kizuna",
+    "range": "target-own",
+    "value": 0.3
+  },
+  "stamina_all_L": {
+    "name": "通常攻撃を行わないが木之本桜の残りHPが多いほど味方全体の攻撃が大きくUP",
+    "type": "normalSupportKonshin",
+    "range": "target-all",
+    "value": "L"
+  },
+  "stamina_all_L_hp_down_own_15": {
+    "name": "最大HPが15%減少 防御力が低いがイシュミールの残りHPが多いほど味方全体の攻撃が大きくUP",
+    "type": "normalSupportKonshin_hpDebuff",
+    "range": "target-all",
+    "value": "L",
+    "hpDebuff": 0.15
+  },
+  "stamina_all_M": {
+    "name": "ルルーシュの残りHPが多いほど味方全体の攻撃が大きくUP",
+    "type": "normalSupportKonshin",
+    "range": "target-all",
+    "value": "M"
+  },
+  "supplemental_third_hit_50k": {
+    "name": "トリプルアタック発動時に3回目の攻撃の5万与ダメージ上昇(ハレゼナ)",
+    "type": "supplemental_third_hit",
+    "range": "target-own",
+    "value": 50000
+  },
+  "ta_up_all_3": {
+    "name": "全体TA率5%UP(ネツァ)",
+    "type": "TASupport",
+    "range": "target-all",
+    "value": 0.05
+  },
+  "wildcard": {
+    "name": "武器スキルの得意武器/タイプ/種族の発動条件を全て満たす(カイム)",
+    "type": "wildcard",
+    "range": "target-own",
+    "value": 0
+  }
+}

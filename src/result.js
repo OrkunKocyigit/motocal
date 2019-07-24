@@ -182,7 +182,7 @@ var ResultList = CreateClass({
             }
 
             var totals = getInitialTotals(prof, chara, summon);
-            treatSupportAbility(totals, chara);
+            treatSupportAbility(totals, chara, totalBuff);
             var itr = combinations.length;
             var totalItr = itr * summon.length * Object.keys(totals).length;
 
@@ -553,6 +553,7 @@ var ResultList = CreateClass({
                     key={i + 1}>&nbsp;/&nbsp;{getElementColorLabel(chara[i].element, locale)}&nbsp;{charaInfoStr}</span>);
             }
         }
+
         // Create buff info line
         let buffInfoStr = createBuffInfoString(locale, prof);
         // Enemy info line
@@ -1396,6 +1397,30 @@ var Result = CreateClass({
                             );
                         }
 
+                        var additionalInfo = [];
+                        if (skilldata["additionalDamageXA"]) {
+                            let {additionalDamageXA} = skilldata;
+                            additionalInfo.push(
+                                <table key={key + "-additionalInfoTable"} className="table table-bordered"
+                                       style={{"marginBottom": "0px", "fontSize": "10pt"}}>
+                                    <thead>
+                                    <tr>
+                                        <th className="bg-success">{intl.translate("追加ダメージXA", locale)}</th>
+                                        <th className="bg-success">SA</th>
+                                        <th className="bg-success">DA</th>
+                                        <th className="bg-success">TA</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{intl.translate("効果量", locale)}</td>
+                                        {additionalDamageXA.map(value => <td>{Math.round(value*100)}%</td>)}
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            );
+                        }
+
                         var supplementalDamageInfo = [];
                         const supplementalInfo = supplemental.collectSkillInfo(skilldata.supplementalDamageArray, {remainHP: m.data[key].remainHP});
                         if (supplementalInfo.total > 0) {
@@ -1447,6 +1472,15 @@ var Result = CreateClass({
                         pushSkillInfoElement3("ougiDamageUP", "奥義ダメージアップ", "default");
                         pushSkillInfoElement3("chainDamageLimit", "チェインダメージ上限アップ", "default");
                         pushSkillInfoElement3("chainDamageUP", "チェインダメージアップ", "default");
+                        if (skilldata["criticalDamageLimit"] !== 0) {
+                            otherSkillInfo.push(
+                                <span key={key + "-" + "normalCriticalDamageLimit"}>
+                                        <span
+                                            className={"label label-" + "default"}>{intl.translate("CriticalDamageLimit (effective)", locale)}</span>&nbsp;
+                                    {(100.0 * skilldata["criticalDamageLimit"]).toFixed(1) + "%\n(" + (100.0 * skilldata["critRate"]).toFixed(1) + "%)"}&nbsp;
+                                    </span>
+                            );
+                        }
                         pushSkillInfoElement3("uplift", "高揚", "default");
 
                         var ougiInfo = [];
@@ -1461,6 +1495,8 @@ var Result = CreateClass({
                         charaDetail[key].push(<div key={key + "-multipleAttackInfo"}>{multipleAttackSkillInfo}</div>);
                         charaDetail[key].push(<div key={key + "-criticalInfo"}
                                                    style={{"margin": "5px 0px"}}>{criticalInfo}</div>);
+                        charaDetail[key].push(<div key={key + "-additionalInfo"}
+                                                   style={{"margin": "5px 0px"}}>{additionalInfo}</div>);
                         charaDetail[key].push(<div key={key + "-supplementalDamageInfo"}
                                                    style={{"margin": "5px 0px"}}>{supplementalDamageInfo}</div>);
                         charaDetail[key].push(<div key={key + "-otherSkillInfo"}>{otherSkillInfo}</div>);
