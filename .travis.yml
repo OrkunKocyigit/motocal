@@ -16,7 +16,7 @@ before_install:
   - "nvm install $NODE_VERSION"
   - "npm update -g npm"
   - "npm ci"
-  - "if [ '${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}' != 'master' ]; then npm run download:arm -- -s game -w 30 -y && npm run download:chara -- -s game -w 30 -y; fi"
+  - "if [ '${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}' == 'master' ]; then npm run download:arm -- -s game -w 30 -y -q && npm run download:chara -- -s game -w 30 -y -q; fi"
 script:
   - npm test
   - sonar-scanner
