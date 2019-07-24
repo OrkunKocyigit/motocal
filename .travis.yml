@@ -14,7 +14,36 @@ before_install:
   - "nvm install $NODE_VERSION"
   - "npm update -g npm"
   - "npm ci"
+  - |
+    if [[ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]]; then
+        echo Start Downloading Images
+        npm run download:arm -- -s game -w 30 -y
+        npm run download:chara -- -s game -w 30 -y
+        echo Downloaded All Images
+    else
+        if [[ $TRAVIS_BRANCH != "master" ]]; then
+            echo Skipping Downloading Images For Non-Master Branch $TRAVIS_BRANCH
+        elif [[ $TRAVIS_PULL_REQUEST != "false" ]]; then
+            echo Skipping Downloading Images For Pull Request $TRAVIS_PULL_REQUEST_BRANCH
+        fi
+    fi
 script:
   - npm test
   - sonar-scanner
   - npm run production-build
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    repo: OrkunKocyigit/motocal-prod
+    github_token: $GITHUB_PROD_TOKEN
+    local_dir: dist
+    on:
+      branch: master
+  - provider: pages
+    skip_cleanup: true
+    repo: OrkunKocyigit/motocal-dev
+    github_token: $GITHUB_DEV_TOKEN
+    local_dir: dist
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH != master
