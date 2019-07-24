@@ -28,6 +28,6 @@ module.exports.translate = function (key, locale) {
 
         return multiLangData[key][locale];
     } catch (e) {
-        console.error("Error! Key " + key + " for language " + locale + " not found")
+        console.error("Error! Key " + key + "for language " + locale + " not found");
     }
 };
