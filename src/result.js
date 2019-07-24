@@ -1472,7 +1472,7 @@ var Result = CreateClass({
                         pushSkillInfoElement3("ougiDamageUP", "奥義ダメージアップ", "default");
                         pushSkillInfoElement3("chainDamageLimit", "チェインダメージ上限アップ", "default");
                         pushSkillInfoElement3("chainDamageUP", "チェインダメージアップ", "default");
-                        if (skilldata["criticalDamageLimit"] != 0) {
+                        if (skilldata["criticalDamageLimit"] !== 0) {
                             otherSkillInfo.push(
                                 <span key={key + "-" + "normalCriticalDamageLimit"}>
                                         <span

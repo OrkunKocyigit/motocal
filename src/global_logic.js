@@ -1524,7 +1524,9 @@ function* eachSupport(chara) {
         if (support.type === 'composite') {
             for (let subSupport of support.value) {
                 // TODO: check undefined and" "none" support
-                yield supportAbilities[subSupport.ID] || subSupport;
+                if (subSupport && subSupport !== "non") {
+                    yield supportAbilities[subSupport.ID] || subSupport;
+                }
             }
             continue;
         }
@@ -2890,7 +2892,7 @@ const treatSupportAbility = function (totals, chara, buff) {
                     }
                     continue;
                 case "element_buff_boost":
-                    for (let [name, chara] of support.range(totals, key)) {
+                    for (let [, chara] of support.range(totals, key)) {
                         if (when.element_buff(chara, buff)) {
                             chara["elementBuffBoostBuff"] = Math.max(support.value, chara["elementBuffBoostBuff"]);
                         }
@@ -2984,7 +2986,7 @@ const treatSupportAbility = function (totals, chara, buff) {
                     }
                     continue;
                 case "critical_cap_up":
-                    for (let [name, chara] of support.range(totals, key)) {
+                    for (let [, chara] of support.range(totals, key)) {
                         chara["criticalDamageLimit"] += support.value;
                     }
                     continue;
@@ -3017,7 +3019,7 @@ const treatSupportAbility = function (totals, chara, buff) {
             //  not work well with, range: "element" etc .. use range function
             let range_filter = range[support.range] || support.range;
 
-            for (let [name, chara] of range_filter(totals, key)) {
+            for (let [, chara] of range_filter(totals, key)) {
                 if (support.when && !support.when(chara, buff))
                     continue;
                 switch (support.assign || "add") {

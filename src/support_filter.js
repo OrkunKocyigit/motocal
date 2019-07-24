@@ -3,35 +3,32 @@
 
 const _entries = Object.entries;
 
+// eslint-disable-next-line no-unused-vars
 const range_none = (totals, key) => [];
 
 // no need to care isConsideredInAverage, and default for isConsideredInAverage: off case.
 const range_own = (totals, key) => [[key, totals[key]]];
 
 // no use range_custom_func because no need ".filter"
-const range_all = (totals, key) => 
-  (!totals[key].isConsideredInAverage) ? range_own(totals, key) : _entries(totals);
+const range_all = (totals, key) => (!totals[key].isConsideredInAverage) ? range_own(totals, key) : _entries(totals);
 
 // no use range_custom_func because need "key"
-const range_others = (totals, key) =>
-  (!totals[key].isConsideredInAverage) ? range_own(totals, key) : _entries(totals).filter(([name, chara]) => name != key);
+const range_others = (totals, key) => (!totals[key].isConsideredInAverage) ? range_own(totals, key) : _entries(totals).filter(([name, ]) => name !== key);
 
-const range_Djeeta = (totals, key) =>
-  (!totals[key].isConsideredInAverage) ? range_none(totals, key) : range_own(totals, "Djeeta");
+const range_Djeeta = (totals, key) => (!totals[key].isConsideredInAverage) ? range_none(totals, key) : range_own(totals, "Djeeta");
 
 
 // Base filtering function takes parameter totals and key
 // if totals[key].isConsideredInAverage then return range_own
-const range_custom_func = (func) => (totals, key) => 
-  (!totals[key].isConsideredInAverage) ? range_own(totals, key) : _entries(totals).filter(func);
+const range_custom_func = (func) => (totals, key) => (!totals[key].isConsideredInAverage) ? range_own(totals, key) : _entries(totals).filter(func);
 
 // Wrapper for range_custom_func, for simplify the function argument specs.
-const range_custom = (func) => range_custom_func(([name, chara]) => func(chara));
+const range_custom = (func) => range_custom_func(([, chara]) => func(chara));
 
 
 // sample filters commonly use
 
-const range_element = (element) => range_custom(chara => chara.element == element);
+const range_element = (element) => range_custom(chara => chara.element === element);
 
 Object.assign(range_element, {
     fire: range_element("fire"),
@@ -44,7 +41,7 @@ Object.assign(range_element, {
 
 // FIXME: This race check is now not completed.
 // e.g. baha race check will match to "unknown", "seisho"
-const range_race = (race) => range_custom(chara => chara.race == race);
+const range_race = (race) => range_custom(chara => chara.race === race);
 
 // TODO: Support two favorite weapons.
 const range_fav = (fav) => range_custom(chara => [chara.fav1, chara.fav2].includes(fav));

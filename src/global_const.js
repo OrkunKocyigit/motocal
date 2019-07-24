@@ -2331,24 +2331,7 @@ var supportAbilities = {
         "type": "supplemental_third_hit",
         "range": "own",
         "value": 50000
-    },
-    // "no_normal_attack": { //lyria, 優しい心; sakura kinomoto, 絶対だいじょうぶだよ >> カードキャプター
-    //     "name": "通常攻撃を行わない。()",
-    //     "type": "no_normal_attack",
-    //     "range": "own",
-    //     "value": true,
-    // }, // for the following two: https://github.com/MotocalDevelopers/motocal/pull/259#issuecomment-509314539
-    // "fumetsu_no_mikiri": {
-    //     "name": "自分の残りHPが少ないほどクリティカル確率UP。(ベアトリクス(水着ver))",
-    //     "type": "fumetsu_no_mikiri",
-    //     "range": "own",
-    //     "value": 0.0,
-    // },
-    // "tousou_no_chishio": {
-    //     "name": "自分の残りHPが少ないほどダブルアタック確率UP/ダメージ上限UP。(アイル)",
-    //     "type": "tousou_no_chishio",
-    //     "range": "own",
-    // },
+    }
 };
 
 // exports
