@@ -1782,7 +1782,7 @@
   "パーティ全体バフ": {
     "en": "Buff for Party",
     "ja": "パーティ全体バフ",
-    "zh": "全队Buff"
+    "zh": "Buff for Party"
   },
   "パーティ平均予想ターン毎ダメージ": {
     "en": "Party-Averaged Exp. Turn Damage",
@@ -2899,10 +2899,10 @@
     "ja": "属性バフ",
     "zh": "属性Buff"
   },
-  "属性バフ付与時に属性攻撃30%UP(パーシヴァル,)": {
-    "en": "Gain an additional 30% boost to Elemental buffs when affected by Elemental Buff (Percival)",
-    "ja": "属性バフ付与時に属性攻撃30%UP(パーシヴァル)",
-    "zh": "属性バフ付与時に属性攻撃30%UP(パーシヴァル)"
+  "属性バフ付与時にステータスUP(スカーサハ)": {
+    "en": "Boost to ATK and multiattack rate when buffed by Elemental Buff (Scathacha)",
+    "ja": "属性バフ付与時にステータスUP(スカーサハ)",
+    "zh": "属性バフ付与時にステータスUP(スカーサハ)"
   },
   "属性バフ付与時に属性攻撃30%UP(パーシヴァル,アグロヴァル)": {
     "en": "Gain an additional 30% boost to Elemental buffs when affected by Elemental Buff (Percival,Agloval)",
@@ -3321,7 +3321,7 @@
   },
   "残HP割合説明(ジータのみ)": {
     "en": "Remain HP Ratio of the Player. Use \"Remain HP Ratio\" form in Buff for Party if you want to set the remain HP ratio of all member.",
-    "ja": "ジータさんの残りHP割合です。パーティ全体の残りHP割合を一括で指定したい場合は、\"パーティ全体への効果\"側で\",”残HP割合\"を指定して下さい。",
+    "ja": "ジータさんの残りHP割合です。パーティ全体の残りHP割合を一括で指定したい場合は、\"パーティ全体への効果\"側で\"残HP割合\"を指定して下さい。",
     "zh": "主角的剩余HP比例。要同时指定全队的剩余HP比例的时候，请指定\"对全队的效果\"中的\"剩余HP比例\"。 "
   },
   "残HP割合説明": {
